@@ -18,3 +18,7 @@ code {
 h1, h2, h3, h4 {
   color: #3498db;
 }
+
+.mr-5 {
+  margin-right: 5px;
+}

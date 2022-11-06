@@ -26,10 +26,6 @@ const Container = styled.div`
       margin-bottom: 1rem;
     }
 
-    form .btn {
-      width: 100%;
-    }
-
     > div.options {
       margin-top: 1rem;
     }

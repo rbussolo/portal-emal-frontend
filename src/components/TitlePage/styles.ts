@@ -1,0 +1,17 @@
+import styled from 'styled-components';
+
+const Container = styled.div`
+  margin-bottom: 1rem;
+  
+  > h1 {
+    margin-bottom: 0rem;
+    line-height: 1;
+  }
+
+  > span {
+    color: #2c3e50;
+    font-weight: 500;
+  }
+`;
+
+export { Container };
