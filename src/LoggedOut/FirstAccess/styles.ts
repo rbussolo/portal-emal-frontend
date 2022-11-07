@@ -33,6 +33,10 @@ const Container = styled.div`
     > div.options {
       margin-top: 1rem;
     }
+
+    div.waiting {
+      font-size: 0.75rem;
+    }
   }
 `;
 

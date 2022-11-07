@@ -111,10 +111,11 @@ function FirstAccess() {
             <Button type="submit" buttonClass="btn-primary" isLoading={isLoading || isWaiting} label={!isWaiting ? "Solicitar Acesso" : "Aguarde um momento"}></Button>
             { 
               isWaiting ? (
-                <div>
-                  Aguarde por {seconds} segundo(s) para enviar novo e-mail.
+                <div className="waiting">
+                  Aguarde por {seconds} segundo(s) para realizar uma nova solicitação.
                 </div>
-                ) : null}
+                ) : null
+            }
 
             
           </form>
