@@ -1,5 +1,6 @@
 import { AxiosError } from "axios";
 import { Api } from "../../services/api";
+import { request } from "../../services/request";
 import { IRequestError, IRequestLogin, IUser } from "./types";
 
 export function setUserLocalStorage(user: IUser | null) {
@@ -19,21 +20,13 @@ export function getUserLocalStorage(): IUser | null {
 }
 
 const LoginRequest = async (email: string, password: string): Promise<IRequestError | IRequestLogin> => {
-  try {
-    const request = await Api.post('auth/sign', { email, password });
-
-    return request.data;
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      const errorRequest = error.response?.data as IRequestError;
-
-      if (errorRequest) {
-        return errorRequest;
-      }
-    }
-
-    return { message: "Ocorreu um erro de comunicação ao servidor." };
+  const result = await request({ method: "post", url: 'auth/sign', data: { email, password } });
+  
+  if ('message' in result) {
+    return result as IRequestError;
   }
+
+  return result as IRequestLogin;
 }
 
 const RefreshToken = async (refresh_token: string): Promise<IRequestError | IRequestLogin> => {
