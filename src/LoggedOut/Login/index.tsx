@@ -5,7 +5,7 @@ import { Container } from "./styles";
 import { useNavigate, Link } from "react-router-dom";
 import { InputGroup } from "../../components/InputGroup";
 import { Button } from "../../components/Button";
-import { AlertError } from "../../components/AlertError";
+import { Alert } from "../../components/Alert";
 import { TitlePage } from "../../components/TitlePage";
 
 function Login(){
@@ -41,7 +41,7 @@ function Login(){
         <div>
           <TitlePage title="Portal de Atendimento" description="#acesseSuaConta"/>
           
-          <AlertError message={error} />
+          <Alert message={error} />
 
           <form onSubmit={handleSubmit}>
             <InputGroup 
