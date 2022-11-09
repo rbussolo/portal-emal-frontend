@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthProvider/useAuth';
 import { Home } from '../LoggedIn/Home';
 import { FirstAccess } from '../LoggedOut/FirstAccess';
+import { ForgetPassword } from '../LoggedOut/ForgetPassword';
 import { Login } from '../LoggedOut/Login';
 
 interface IPrivate {
@@ -26,6 +27,7 @@ const RoutesApp = () => {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/first-access" element={<FirstAccess />} />
+          <Route path="/forget-password" element={<ForgetPassword />} />
           <Route path="/home" element={
             <ProtectedLayout>
               <Home />
