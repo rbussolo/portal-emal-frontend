@@ -4,7 +4,9 @@ import { useAuth } from '../contexts/AuthProvider/useAuth';
 import { Home } from '../LoggedIn/Home';
 import { FirstAccess } from '../LoggedOut/FirstAccess';
 import { ForgetPassword } from '../LoggedOut/ForgetPassword';
+
 import { Login } from '../LoggedOut/Login';
+import { ResetPassword } from '../LoggedOut/ResetPassword';
 
 interface IPrivate {
   children: JSX.Element
@@ -28,6 +30,7 @@ const RoutesApp = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/first-access" element={<FirstAccess />} />
           <Route path="/forget-password" element={<ForgetPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/home" element={
             <ProtectedLayout>
               <Home />
