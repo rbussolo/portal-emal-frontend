@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthProvider/useAuth";
 import { Header } from "../components/Header";
 import { Container } from "./styles";
@@ -17,6 +17,10 @@ function Login(){
   const auth = useAuth();
   const navigate = useNavigate();
   
+  useEffect(() => {
+    
+  }, []);
+
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
