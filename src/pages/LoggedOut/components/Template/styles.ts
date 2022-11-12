@@ -21,8 +21,14 @@ export const Container = styled.div`
     padding: 1.5rem;
     background-color: #fff;
 
-    form .btn {
-      width: 100%;
+    form{
+      .btn {
+        width: 100%;
+      }
+
+      .waiting {
+        font-size: 0.75rem;
+      }
     }
   }
 `
