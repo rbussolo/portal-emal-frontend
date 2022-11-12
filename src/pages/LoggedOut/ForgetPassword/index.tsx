@@ -1,32 +1,32 @@
 import { Header } from "../components/Header";
 import { Container } from "./styles";
 import { Link } from "react-router-dom";
-import { TitlePage } from "../../components/TitlePage";
-import { Alert, AlertProps, AlertType } from "../../components/Alert";
+import { TitlePage } from "../../../components/TitlePage";
+import { Alert, AlertProps, AlertType } from "../../../components/Alert";
 import { FormEvent, useEffect, useState } from "react";
-import { InputGroup } from "../../components/InputGroup";
-import { Button } from "../../components/Button";
-import { maskCnpj } from "../../utils/mask";
-import { request } from "../../services/request";
-import { IRequestError } from "../../contexts/AuthProvider/types";
-import { useTimer } from "../../contexts/TimerData";
+import { InputGroup } from "../../../components/InputGroup";
+import { Button } from "../../../components/Button";
+import { request } from "../../../services/request";
+import { IRequestError } from "../../../contexts/AuthProvider/types";
+import { useTimer } from "../../../contexts/TimerData";
+import { maskCpfCnpj } from "../../../utils/mask";
 
-function FirstAccess() {
+function ForgetPassword() {
   const [alert, setAlert] = useState({} as AlertProps);
-  const [cnpj, setCnpj] = useState("");
+  const [cpfCnpj, setCpfCnpj] = useState("");
   const [email, setEmail] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [isWaiting, setWaiting] = useState(false);
   const [seconds, setSeconds] = useState(0);
 
   const timer = useTimer(); 
-  const TIMER_TAG = "FIRST_ACCESS";
+  const TIMER_TAG = "FORGOT_PASSWORD";
 
   useEffect(() => {
     const dataStorage = timer.hasTimer(TIMER_TAG);
     
     if(dataStorage.isAlive && dataStorage.data) {
-      setCnpj(dataStorage.data.data.cpf_cnpj);
+      setCpfCnpj(dataStorage.data.data.cpf_cnpj);
       setEmail(dataStorage.data.data.email);
       
       setAlert({ type: AlertType.success, message: "Foi enviado um e-mail com instruções para continuar o cadastro, favor verifique." });
@@ -55,16 +55,16 @@ function FirstAccess() {
     event.preventDefault();
     setLoading(true);
 
-    const data = { cpf_cnpj: cnpj, email };
+    const data = { cpf_cnpj: cpfCnpj, email };
 
-    const result = await request({ method: "post", url: 'user/migrate', data: data });
+    const result = await request({ method: "post", url: 'user/forgotPassword', data: data });
     
-    if ('message' in result) {
+    if ('message' in result && result.message !== "E-mail enviado com sucesso!") {
       const requestError = result as IRequestError;
 
       setAlert({ message: requestError.message });
     } else {
-      setAlert({ type: AlertType.success, message: "Foi enviado um e-mail com instruções para continuar o cadastro, favor verifique." });
+      setAlert({ type: AlertType.success, message: "Foi enviado um e-mail com instruções para resetar sua senha, favor verifique." });
       setWaiting(true);
 
       const interval = setInterval(() => { updateTimer(interval) }, 1000);
@@ -83,19 +83,19 @@ function FirstAccess() {
 
       <Container>
         <div>
-          <TitlePage title="Portal de Atendimento" description="#primeiroAcesso" />
+          <TitlePage title="Portal de Atendimento" description="#esqueceuSuaSenha" />
 
           <Alert message={alert.message} type={alert.type} />
 
           <form onSubmit={handleSubmit}>
             <InputGroup
               groupClass="mb-1"
-              name="cnpj"
-              label="CNPJ"
+              name="cpfCnpj"
+              label="CPF/CNPJ"
               type="text"
-              placeholder="CNPJ da empresa"
-              value={cnpj}
-              onChange={event => setCnpj(maskCnpj(event.target.value))}
+              placeholder="CPF/CNPJ"
+              value={cpfCnpj}
+              onChange={event => setCpfCnpj(maskCpfCnpj(event.target.value))}
             />
 
             <InputGroup
@@ -108,7 +108,7 @@ function FirstAccess() {
               onChange={event => setEmail(event.target.value)}
             />
 
-            <Button type="submit" buttonClass="btn-primary" isLoading={isLoading || isWaiting} label={!isWaiting ? "Solicitar Acesso" : "Aguarde um momento"}></Button>
+            <Button type="submit" buttonClass="btn-primary" isLoading={isLoading || isWaiting} label={!isWaiting ? "Solicitar nova senha" : "Aguarde um momento"}></Button>
             { 
               isWaiting ? (
                 <div className="waiting">
@@ -122,7 +122,7 @@ function FirstAccess() {
 
           <div className="options">
             <div>
-              <Link to="login">Clique aqui</Link> para acessar sua conta.
+              <Link to="/login">Clique aqui</Link> para acessar sua conta.
             </div>
           </div>
         </div>
@@ -131,4 +131,4 @@ function FirstAccess() {
   );
 }
 
-export { FirstAccess }
+export { ForgetPassword }

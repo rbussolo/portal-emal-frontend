@@ -1,5 +1,5 @@
 import { Container } from "./styles";
-import logo from './../../../assets/images/logo.png';
+import logo from './../../../../assets/images/logo.png';
 
 function Header() {
   return (
