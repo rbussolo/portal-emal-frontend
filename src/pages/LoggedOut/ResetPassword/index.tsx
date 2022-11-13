@@ -4,8 +4,6 @@ import { AlertProps } from "../../../components/Alert";
 import { FormEvent, useEffect, useState } from "react";
 import { InputGroup } from "../../../components/InputGroup";
 import { Button } from "../../../components/Button";
-import { request } from "../../../services/request";
-import { IRequestError } from "../../../contexts/AuthProvider/types";
 import { Api } from "../../../services/api";
 import { Template } from "../components/Template";
 import { Option, Options } from "../components/Options";
@@ -24,7 +22,7 @@ function ResetPassword() {
       try {
         await Api.post("user/checkToken/" + token);
       } catch(error) {
-        navigate("/login");
+        navigate("/login", { state: { passwordChanged: true } });
       }
     }
 
@@ -39,16 +37,12 @@ function ResetPassword() {
     } else {
       setLoading(true);
 
-      const data = { password: newPassword };
+      const response = await Api.post('user/resetPassword/' + token, { password: newPassword });
 
-      const result = await request({ method: "post", url: 'user/resetPassword/' + token, data: data });
-
-      if ('message' in result && result.message !== "Senha alterada com sucesso!") {
-        const requestError = result as IRequestError;
-
-        setAlert({ message: requestError.message });
+      if (response.status >= 400) {
+        setAlert({ message: response.data.message });
       } else {
-        navigate("/login");
+        navigate("/login", { state: { passwordChanged: true } });
       }
 
       setLoading(false);

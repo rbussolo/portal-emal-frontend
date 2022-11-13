@@ -1,6 +1,10 @@
-import { FormEvent, useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import Swal from "sweetalert2";
+import '@sweetalert2/theme-bootstrap-4/bootstrap-4.css';
+import { FormEvent, useState, useEffect } from "react";
+
 import { useAuth } from "../../../contexts/AuthProvider/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { InputGroup } from "../../../components/InputGroup";
 import { Button } from "../../../components/Button";
 import { Template } from "../components/Template";
@@ -14,6 +18,20 @@ function Login(){
 
   const auth = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.passwordChanged === true) {
+      Swal.fire({
+        title: "Sucesso!",
+        text: "Operação realizada com sucesso!",
+        icon: "success",
+        confirmButtonText: "Confirmar"
+      });
+
+      window.history.replaceState({}, document.title);
+    }
+  }, []);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
