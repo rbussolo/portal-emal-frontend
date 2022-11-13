@@ -3,12 +3,11 @@ import { AlertProps, AlertType } from "../../../components/Alert";
 import { FormEvent, useEffect, useState } from "react";
 import { InputGroup } from "../../../components/InputGroup";
 import { Button } from "../../../components/Button";
-import { request } from "../../../services/request";
-import { IRequestError } from "../../../contexts/AuthProvider/types";
 import { useTimer } from "../../../contexts/TimerData";
 import { maskCpfCnpj } from "../../../utils/mask";
 import { Template } from "../components/Template";
 import { Option, Options } from "../components/Options";
+import { Api } from "../../../services/api";
 
 function ForgetPassword() {
   const [alert, setAlert] = useState({} as AlertProps);
@@ -31,46 +30,34 @@ function ForgetPassword() {
       setAlert({ type: AlertType.success, message: "Foi enviado um e-mail com instruções para continuar o cadastro, favor verifique." });
       setWaiting(true);
 
-      const interval = setInterval(() => updateTimer(interval), 1000) as NodeJS.Timer;
-
-      updateTimer();
+      timer.startUpdate({
+        timer,
+        tag: TIMER_TAG,
+        update: seconds => setSeconds(seconds),
+        stop: () => { setWaiting(false); }
+      });
     }
   }, []);
-
-  function updateTimer(intervalId?: number | NodeJS.Timer) {
-    const dataStorage = timer.hasTimer(TIMER_TAG);
-
-    if (dataStorage.isAlive && dataStorage.data) {
-      const s = dataStorage.data?.startAt + 30 - Math.floor(Date.now() / 1000);
-
-      setSeconds(s);
-    } else {
-      setWaiting(false);
-      clearInterval(intervalId);
-    }
-  }
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     setLoading(true);
 
-    const data = { cpf_cnpj: cpfCnpj, email };
+    const response = await Api.post('user/forgotPassword', { cpf_cnpj: cpfCnpj, email });
 
-    const result = await request({ method: "post", url: 'user/forgotPassword', data: data });
-    
-    if ('message' in result && result.message !== "E-mail enviado com sucesso!") {
-      const requestError = result as IRequestError;
-
-      setAlert({ message: requestError.message });
+    if (response.status >= 400) {
+      setAlert({ message: response.data.message });
     } else {
       setAlert({ type: AlertType.success, message: "Foi enviado um e-mail com instruções para resetar sua senha, favor verifique." });
       setWaiting(true);
 
-      const interval = setInterval(() => { updateTimer(interval) }, 1000);
-
-      timer.startTimer(TIMER_TAG, data);
-
-      updateTimer();
+      timer.startTimer(TIMER_TAG, { cpf_cnpj: cpfCnpj, email });
+      timer.startUpdate({
+        timer,
+        tag: TIMER_TAG,
+        update: seconds => setSeconds(seconds),
+        stop: () => { setWaiting(false); }
+      });
     }
 
     setLoading(false);

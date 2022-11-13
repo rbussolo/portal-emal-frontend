@@ -14,10 +14,20 @@ interface ITimer {
   data?: ITimerStorage;
 }
 
+interface IUpdateTimer {
+  intervalId?: number | NodeJS.Timer;
+  timer: ITimerContext;
+  tag: string;
+  update: (seconds: number) => void;
+  stop: () => void;
+}
+
 export interface ITimerContext {
   startTimer: (tag: string, data: any, callback?: () => void) => void;
   hasTimer: (tag: string) => ITimer;
   stopTimer: (tag: string) => void;
+  updateTimer: ({ timer, tag, update, stop }: IUpdateTimer) => boolean;
+  startUpdate: ({ timer, tag, update, stop }: IUpdateTimer) => void;
 }
 
 const TimerContext = createContext<ITimerContext>({} as ITimerContext);
@@ -59,8 +69,36 @@ const TimerProvider = ({ children }: ITimerProvider) => {
     localStorage.removeItem(tag);
   }
 
+  function updateTimer({ intervalId, timer, tag, update, stop }: IUpdateTimer): boolean {
+    const dataStorage = timer.hasTimer(tag);
+
+    if (dataStorage.isAlive && dataStorage.data) {
+      const seconds = dataStorage.data?.startAt + 30 - Math.floor(Date.now() / 1000);
+
+      update(seconds);
+
+      return true;
+    } 
+      
+    stop();
+
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
+    
+    return false;
+  }
+
+  function startUpdate({ timer, tag, update, stop }: IUpdateTimer): void {
+    const isAlive = timer.updateTimer({ timer, tag, update, stop });
+
+    if (isAlive) {
+      const intervalId = setInterval(() => timer.updateTimer({ intervalId, timer, tag, update, stop }), 1000) as NodeJS.Timer;
+    }
+  }
+
   return (
-    <TimerContext.Provider value={{ startTimer, hasTimer, stopTimer }}>
+    <TimerContext.Provider value={{ startTimer, hasTimer, stopTimer, updateTimer, startUpdate }}>
       { children }
     </TimerContext.Provider>
   )
