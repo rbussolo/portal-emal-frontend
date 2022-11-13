@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { AlertProps, AlertType } from "../../../components/Alert";
 import { FormEvent, useEffect, useState } from "react";
 import { InputGroup } from "../../../components/InputGroup";
 import { Button } from "../../../components/Button";
@@ -8,9 +7,9 @@ import { useTimer } from "../../../contexts/TimerData";
 import { Template } from "../components/Template";
 import { Option, Options } from "../components/Options";
 import { Api } from "../../../services/api";
+import { useAlert } from "../../../contexts/AlertProvider";
 
 function FirstAccess() {
-  const [alert, setAlert] = useState({} as AlertProps);
   const [cnpj, setCnpj] = useState("");
   const [email, setEmail] = useState("");
   const [isLoading, setLoading] = useState(false);
@@ -19,6 +18,7 @@ function FirstAccess() {
 
   const timer = useTimer(); 
   const TIMER_TAG = "FIRST_ACCESS";
+  const alert = useAlert();
 
   useEffect(() => {
     const dataStorage = timer.hasTimer(TIMER_TAG);
@@ -27,7 +27,7 @@ function FirstAccess() {
       setCnpj(dataStorage.data.data.cpf_cnpj);
       setEmail(dataStorage.data.data.email);
       
-      setAlert({ type: AlertType.success, message: "Foi enviado um e-mail com instruções para continuar o cadastro, favor verifique." });
+      alert.showSuccess("Foi enviado um e-mail com instruções para continuar o cadastro, favor verifique.");
       setWaiting(true);
 
       timer.startUpdate({ 
@@ -46,9 +46,9 @@ function FirstAccess() {
     const response = await Api.post('user/migrate', { cpf_cnpj: cnpj, email });
     
     if (response.status >= 400) {
-      setAlert({ message: response.data.message });
+      alert.showError(response.data.message);
     } else {
-      setAlert({ type: AlertType.success, message: "Foi enviado um e-mail com instruções para continuar o cadastro, favor verifique." });
+      alert.showSuccess("Foi enviado um e-mail com instruções para continuar o cadastro, favor verifique.");
       setWaiting(true);
 
       timer.startTimer(TIMER_TAG, { cpf_cnpj: cnpj, email });
@@ -68,8 +68,6 @@ function FirstAccess() {
       <Template
         title="Portal de Atendimento"
         description="#primeiroAcesso"
-        alertMessage={alert.message}
-        alertType={alert.type}
       >
         <form onSubmit={handleSubmit}>
           <InputGroup

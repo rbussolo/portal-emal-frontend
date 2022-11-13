@@ -1,6 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import Swal from "sweetalert2";
-import '@sweetalert2/theme-bootstrap-4/bootstrap-4.css';
 import { FormEvent, useState, useEffect } from "react";
 
 import { useAuth } from "../../../contexts/AuthProvider/useAuth";
@@ -9,9 +7,9 @@ import { InputGroup } from "../../../components/InputGroup";
 import { Button } from "../../../components/Button";
 import { Template } from "../components/Template";
 import { Option, Options } from "../components/Options";
+import { useAlert } from "../../../contexts/AlertProvider";
 
 function Login(){
-  const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setLoading] = useState(false);
@@ -19,16 +17,12 @@ function Login(){
   const auth = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const alert = useAlert();
 
   useEffect(() => {
     if (location.state?.passwordChanged === true) {
-      Swal.fire({
-        title: "Sucesso!",
-        text: "Operação realizada com sucesso!",
-        icon: "success",
-        confirmButtonText: "Confirmar"
-      });
-
+      alert.showSuccess("Operação realizada com sucesso!");
+      
       window.history.replaceState({}, document.title);
     }
   }, []);
@@ -41,7 +35,7 @@ function Login(){
     const result = await auth.authenticate(email, password);
 
     if ('message' in result) {
-      setError(result.message);
+      alert.showError(result.message);
     } else {
       navigate("/home");
     }
@@ -54,7 +48,6 @@ function Login(){
       <Template
         title="Portal de Atendimento"
         description="#acesseSuaConta"
-        alertMessage={error}
       >
         <form onSubmit={handleSubmit}>
           <InputGroup 

@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { RoutesApp } from './routes';
 import { AuthProvider } from './contexts/AuthProvider';
 import { TimerProvider } from './contexts/TimerData';
+import { AlertProvider } from './contexts/AlertProvider';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -14,7 +15,9 @@ root.render(
   <React.StrictMode>
     <AuthProvider>
       <TimerProvider>
-        <RoutesApp />
+        <AlertProvider>
+          <RoutesApp />
+        </AlertProvider>
       </TimerProvider>
     </AuthProvider>
   </React.StrictMode>

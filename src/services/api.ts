@@ -1,6 +1,6 @@
 import { useAuth } from './../contexts/AuthProvider/useAuth';
-import axios, { AxiosRequestConfig } from 'axios';
-import { getUserLocalStorage, RefreshToken } from '../contexts/AuthProvider/util';
+import axios from 'axios';
+import { getUserLocalStorage } from '../contexts/AuthProvider/util';
 
 const BASE_URL = "http://localhost:3333/api/";
 

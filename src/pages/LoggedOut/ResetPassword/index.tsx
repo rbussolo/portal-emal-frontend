@@ -1,21 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useNavigate, useParams } from "react-router-dom";
-import { AlertProps } from "../../../components/Alert";
 import { FormEvent, useEffect, useState } from "react";
 import { InputGroup } from "../../../components/InputGroup";
 import { Button } from "../../../components/Button";
 import { Api } from "../../../services/api";
 import { Template } from "../components/Template";
 import { Option, Options } from "../components/Options";
+import { useAlert } from "../../../contexts/AlertProvider";
 
 function ResetPassword() {
-  const [alert, setAlert] = useState({} as AlertProps);
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordAgain, setNewPasswordAgain] = useState("");
   const [isLoading, setLoading] = useState(false);
 
   const { token } = useParams();
   const navigate = useNavigate();
+  const alert = useAlert();
 
   useEffect(() => {
     async function checkToken() {
@@ -33,14 +33,14 @@ function ResetPassword() {
     event.preventDefault();
 
     if (newPassword !== newPasswordAgain) {
-      setAlert({ message: "As senhas informadas devem ser iguais." });
+      alert.showError("As senhas informadas devem ser iguais.");
     } else {
       setLoading(true);
 
       const response = await Api.post('user/resetPassword/' + token, { password: newPassword });
 
       if (response.status >= 400) {
-        setAlert({ message: response.data.message });
+        alert.showError(response.data.message);
       } else {
         navigate("/login", { state: { passwordChanged: true } });
       }
@@ -54,8 +54,6 @@ function ResetPassword() {
       <Template
         title="Portal de Atendimento"
         description="#definirNovaSenha"
-        alertMessage={alert.message}
-        alertType={alert.type}
       >
         <form onSubmit={handleSubmit}>
           <InputGroup

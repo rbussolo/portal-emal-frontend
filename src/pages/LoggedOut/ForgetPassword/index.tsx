@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { AlertProps, AlertType } from "../../../components/Alert";
 import { FormEvent, useEffect, useState } from "react";
 import { InputGroup } from "../../../components/InputGroup";
 import { Button } from "../../../components/Button";
@@ -8,9 +7,9 @@ import { maskCpfCnpj } from "../../../utils/mask";
 import { Template } from "../components/Template";
 import { Option, Options } from "../components/Options";
 import { Api } from "../../../services/api";
+import { useAlert } from "../../../contexts/AlertProvider";
 
 function ForgetPassword() {
-  const [alert, setAlert] = useState({} as AlertProps);
   const [cpfCnpj, setCpfCnpj] = useState("");
   const [email, setEmail] = useState("");
   const [isLoading, setLoading] = useState(false);
@@ -19,6 +18,7 @@ function ForgetPassword() {
 
   const timer = useTimer(); 
   const TIMER_TAG = "FORGOT_PASSWORD";
+  const alert = useAlert();
 
   useEffect(() => {
     const dataStorage = timer.hasTimer(TIMER_TAG);
@@ -27,7 +27,7 @@ function ForgetPassword() {
       setCpfCnpj(dataStorage.data.data.cpf_cnpj);
       setEmail(dataStorage.data.data.email);
       
-      setAlert({ type: AlertType.success, message: "Foi enviado um e-mail com instruções para continuar o cadastro, favor verifique." });
+      alert.showSuccess("Foi enviado um e-mail com instruções para continuar o cadastro, favor verifique.");
       setWaiting(true);
 
       timer.startUpdate({
@@ -46,9 +46,9 @@ function ForgetPassword() {
     const response = await Api.post('user/forgotPassword', { cpf_cnpj: cpfCnpj, email });
 
     if (response.status >= 400) {
-      setAlert({ message: response.data.message });
+      alert.showError(response.data.message);
     } else {
-      setAlert({ type: AlertType.success, message: "Foi enviado um e-mail com instruções para resetar sua senha, favor verifique." });
+      alert.showSuccess("Foi enviado um e-mail com instruções para resetar sua senha, favor verifique.");
       setWaiting(true);
 
       timer.startTimer(TIMER_TAG, { cpf_cnpj: cpfCnpj, email });
@@ -68,8 +68,6 @@ function ForgetPassword() {
       <Template
         title="Portal de Atendimento"
         description="#esqueceuSuaSenha"
-        alertMessage={alert.message}
-        alertType={alert.type}
       >
         <form onSubmit={handleSubmit}>
           <InputGroup
