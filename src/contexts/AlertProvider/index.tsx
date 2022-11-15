@@ -12,6 +12,7 @@ interface IAlertProvider {
 export interface IAlertContext {
   showError: (message: string) => void;
   showSuccess: (message: string) => void;
+  showInfo: (message: string) => void;
   showModal: (message: string, type: string) => void;
 }
 
@@ -23,7 +24,7 @@ const AlertProvider = ({ children }: IAlertProvider) => {
       title: "Erro!",
       text: message,
       icon: "error",
-      confirmButtonText: "Confirmar"
+      confirmButtonText: "Fechar"
     });
   }
 
@@ -32,7 +33,16 @@ const AlertProvider = ({ children }: IAlertProvider) => {
       title: "Sucesso!",
       text: message,
       icon: "success",
-      confirmButtonText: "Confirmar"
+      confirmButtonText: "Fechar"
+    });
+  }
+
+  function showInfo(message: string): void {
+    Swal.fire({
+      title: "Informação!",
+      html: message,
+      icon: "info",
+      confirmButtonText: "Fechar"
     });
   }
 
@@ -41,12 +51,12 @@ const AlertProvider = ({ children }: IAlertProvider) => {
       title: type === AlertType.success ? "Sucesso!" : "Erro!",
       text: message,
       icon: type === AlertType.success ? "success" : "error",
-      confirmButtonText: "Confirmar"
+      confirmButtonText: "Fechar"
     });
   }
 
   return (
-    <AlertContext.Provider value={{ showError, showSuccess, showModal }}>
+    <AlertContext.Provider value={{ showError, showSuccess, showInfo, showModal }}>
       {children}
     </AlertContext.Provider>
   )

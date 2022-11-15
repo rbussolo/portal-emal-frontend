@@ -8,6 +8,7 @@ import { Template } from "../components/Template";
 import { Option, Options } from "../components/Options";
 import { Api } from "../../../services/api";
 import { useAlert } from "../../../contexts/AlertProvider";
+import { ButtonLikeLink } from "./styles";
 
 function FirstAccess() {
   const [cnpj, setCnpj] = useState("");
@@ -63,6 +64,18 @@ function FirstAccess() {
     setLoading(false);
   }
 
+  async function handleForgetEmail() {
+    if (!cnpj) return alert.showError("É necessário informar o CNPJ da empresa!");
+
+    const response = await Api.post('user/forgotEmail', { cpf_cnpj: cnpj });
+
+    if (response.status >= 400) {
+      alert.showError(response.data.message);
+    } else {
+      alert.showInfo("O e-mail cadastrado para este CNPJ é: <br /><b>" + response.data.email + "</b>");
+    }
+  }
+
   return (
     <>
       <Template
@@ -80,15 +93,13 @@ function FirstAccess() {
             onChange={event => setCnpj(maskCnpj(event.target.value))}
           />
 
-          <InputGroup
-            groupClass="mb-3"
-            name="email"
-            label="E-mail"
-            type="email"
-            placeholder="E-mail de contato"
-            value={email}
-            onChange={event => setEmail(event.target.value)}
-          />
+          <div className="mb-3">
+            <div>
+              <label htmlFor="email" className="form-label">E-mail:</label>
+              <ButtonLikeLink as="a" onClick={handleForgetEmail}>Esqueceu o e-mail?</ButtonLikeLink>
+            </div>
+            <input id="email" name="email" type="email" placeholder="E-mail de contato" value={email} onChange={event => setEmail(event.target.value)} className="form-control" />
+          </div>
 
           <Button type="submit" buttonClass="btn-primary" isLoading={isLoading || isWaiting} label={!isWaiting ? "Solicitar Acesso" : "Aguarde um momento"}></Button>
           { 
