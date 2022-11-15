@@ -9,7 +9,6 @@ import { Option, Options } from "../../../components/Options";
 import { useAlert } from "../../../contexts/AlertProvider";
 import { Container } from "./styles";
 import { TitlePage } from "../../../components/TitlePage";
-import { Template } from "../../../components/Template";
 
 function Login(){
   const [email, setEmail] = useState("");

@@ -4,7 +4,6 @@ import { FormEvent, useEffect, useState } from "react";
 import { InputGroup } from "../../../components/InputGroup";
 import { Button } from "../../../components/Button";
 import { Api } from "../../../services/api";
-import { Template } from "../../../components/Template";
 import { Option, Options } from "../../../components/Options";
 import { useAlert } from "../../../contexts/AlertProvider";
 import { Container } from "./styles";

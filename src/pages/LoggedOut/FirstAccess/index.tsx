@@ -4,7 +4,6 @@ import { InputGroup } from "../../../components/InputGroup";
 import { Button } from "../../../components/Button";
 import { maskCnpj } from "../../../utils/mask";
 import { useTimer } from "../../../contexts/TimerData";
-import { Template } from "../../../components/Template";
 import { Option, Options } from "../../../components/Options";
 import { Api } from "../../../services/api";
 import { useAlert } from "../../../contexts/AlertProvider";
