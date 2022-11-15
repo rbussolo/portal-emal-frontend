@@ -1,28 +1,35 @@
 import styled from 'styled-components';
 
-const Container = styled.div`
-  width: 100%;
-  height: 5rem;
-
-  background-color: #fff;
-
-  display: flex;
-  justify-content: center;
-
-  div {
-    margin-left: 1rem;
-    margin-right: 1rem;
-    
-    width: 100%;
-    max-width: 1200px;
-
-    display: flex;
-    align-items: center;
-
-    img {
-      max-height: 4.5rem;
-    }
-  }
+const Logo = styled.img`
+  max-height: 3.5rem;
 `;
 
-export { Container };
+const NavbarBrandContainer = styled.div`
+  display: flex;
+
+  a:hover {
+    color: #3498db;
+  }
+`
+
+const NavItemContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 70px;
+
+  i {
+    margin-top: -20px;
+    margin-bottom: -15px;
+    font-size: 40px;
+    padding-top: 10px;
+  }
+
+  span {
+    font-size: 0.75rem;
+  }
+`
+
+export { Logo, NavItemContainer, NavbarBrandContainer };

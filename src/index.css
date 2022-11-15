@@ -22,3 +22,7 @@ h1, h2, h3, h4 {
 .mr-5 {
   margin-right: 5px;
 }
+
+.navbar {
+  height: 5rem;
+}

@@ -8,8 +8,10 @@ function Home() {
   }
 
   return (
-    <h1>
-      Você esta logado como: 
+    <>
+      <h1>
+        Você esta logado como:
+      </h1>
       <h3>
         Nome: {auth.user?.name} <br />
         E-mail: {auth.user?.email} <br />
@@ -18,7 +20,7 @@ function Home() {
         Tipo: {auth.user?.type} <br />
       </h3>
       <button onClick={handleLogout}>Deslogar!</button>
-    </h1>
+    </>
   )
 }
 

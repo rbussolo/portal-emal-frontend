@@ -65,7 +65,7 @@ const RoutesLogin = () => {
           <Route path="/first-access" element={<FirstAccess />} />
           <Route path="/forget-password" element={<ForgetPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
-          <Route path="*" element={<Redirect />} />
+          <Route path="*" element={<Login />} />
         </Routes>
       </Fragment>
     </BrowserRouter>
