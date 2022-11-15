@@ -1,11 +1,17 @@
 export interface IUser {
-  email?: string;
+  user?: {
+    id: number;
+    name: string;
+    cpf_cnpj: string;
+    email: string;
+    cellphone: string;
+    type: string;
+  }
   access_token?: string;
   refresh_token?: string;
 }
 
 export interface IContext extends IUser {
-  type?: string;
   authenticate: (email: string, password: string) => Promise<IRequestError | IRequestLogin>;
   logout: () => void;
   refreshToken: () => Promise<IRequestError | IRequestLogin>;

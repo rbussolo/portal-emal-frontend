@@ -6,7 +6,7 @@ function Footer(){
     <Container>
       <div>
         <div className="left">
-          <Link to="/">@2022 - Grupo Emal</Link>
+          <a href="/">@2022 - Grupo Emal</a>
         </div>
         <div className="right">
           <span>E-mail: cac@grupoemal.com.br</span> 

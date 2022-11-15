@@ -4,11 +4,12 @@ import { InputGroup } from "../../../components/InputGroup";
 import { Button } from "../../../components/Button";
 import { maskCnpj } from "../../../utils/mask";
 import { useTimer } from "../../../contexts/TimerData";
-import { Template } from "../components/Template";
-import { Option, Options } from "../components/Options";
+import { Template } from "../../../components/Template";
+import { Option, Options } from "../../../components/Options";
 import { Api } from "../../../services/api";
 import { useAlert } from "../../../contexts/AlertProvider";
-import { ButtonLikeLink } from "./styles";
+import { ButtonLikeLink, Container } from "./styles";
+import { TitlePage } from "../../../components/TitlePage";
 
 function FirstAccess() {
   const [cnpj, setCnpj] = useState("");
@@ -78,43 +79,44 @@ function FirstAccess() {
 
   return (
     <>
-      <Template
-        title="Portal de Atendimento"
-        description="#primeiroAcesso"
-      >
-        <form onSubmit={handleSubmit}>
-          <InputGroup
-            groupClass="mb-1"
-            name="cnpj"
-            label="CNPJ"
-            type="text"
-            placeholder="CNPJ da empresa"
-            value={cnpj}
-            onChange={event => setCnpj(maskCnpj(event.target.value))}
-          />
+      <Container>
+        <div>
+          <TitlePage title="Portal de Atendimento" description="#primeiroAcesso" />
 
-          <div className="mb-3">
-            <div>
-              <label htmlFor="email" className="form-label">E-mail:</label>
-              <ButtonLikeLink as="a" onClick={handleForgetEmail}>Esqueceu o e-mail?</ButtonLikeLink>
-            </div>
-            <input id="email" name="email" type="email" placeholder="E-mail de contato" value={email} onChange={event => setEmail(event.target.value)} className="form-control" />
-          </div>
+          <form onSubmit={handleSubmit}>
+            <InputGroup
+              groupClass="mb-1"
+              name="cnpj"
+              label="CNPJ"
+              type="text"
+              placeholder="CNPJ da empresa"
+              value={cnpj}
+              onChange={event => setCnpj(maskCnpj(event.target.value))}
+            />
 
-          <Button type="submit" buttonClass="btn-primary" isLoading={isLoading || isWaiting} label={!isWaiting ? "Solicitar Acesso" : "Aguarde um momento"}></Button>
-          { 
-            isWaiting ? (
-              <div className="waiting">
-                Aguarde por {seconds} segundo(s) para realizar uma nova solicitação.
+            <div className="mb-3">
+              <div>
+                <label htmlFor="email" className="form-label">E-mail:</label>
+                <ButtonLikeLink as="a" onClick={handleForgetEmail}>Esqueceu o e-mail?</ButtonLikeLink>
               </div>
-              ) : null
-          }          
-        </form>
+              <input id="email" name="email" type="email" placeholder="E-mail de contato" value={email} onChange={event => setEmail(event.target.value)} className="form-control" />
+            </div>
 
-        <Options>
-          <Option link="/login" linkDescription="Clique aqui" description=" para acessar sua conta." />
-        </Options>
-      </Template>
+            <Button type="submit" buttonClass="btn-primary" isLoading={isLoading || isWaiting} label={!isWaiting ? "Solicitar Acesso" : "Aguarde um momento"}></Button>
+            { 
+              isWaiting ? (
+                <div className="waiting">
+                  Aguarde por {seconds} segundo(s) para realizar uma nova solicitação.
+                </div>
+                ) : null
+            }          
+          </form>
+
+          <Options>
+            <Option link="/login" linkDescription="Clique aqui" description=" para acessar sua conta." />
+          </Options>
+        </div>
+      </Container>
     </>
   );
 }

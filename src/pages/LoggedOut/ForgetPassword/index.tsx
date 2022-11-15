@@ -4,10 +4,12 @@ import { InputGroup } from "../../../components/InputGroup";
 import { Button } from "../../../components/Button";
 import { useTimer } from "../../../contexts/TimerData";
 import { maskCpfCnpj } from "../../../utils/mask";
-import { Template } from "../components/Template";
-import { Option, Options } from "../components/Options";
+import { Template } from "../../../components/Template";
+import { Option, Options } from "../../../components/Options";
 import { Api } from "../../../services/api";
 import { useAlert } from "../../../contexts/AlertProvider";
+import { TitlePage } from "../../../components/TitlePage";
+import { Container } from "./styles";
 
 function ForgetPassword() {
   const [cpfCnpj, setCpfCnpj] = useState("");
@@ -65,45 +67,46 @@ function ForgetPassword() {
 
   return (
     <>
-      <Template
-        title="Portal de Atendimento"
-        description="#esqueceuSuaSenha"
-      >
-        <form onSubmit={handleSubmit}>
-          <InputGroup
-            groupClass="mb-1"
-            name="cpfCnpj"
-            label="CPF/CNPJ"
-            type="text"
-            placeholder="CPF/CNPJ"
-            value={cpfCnpj}
-            onChange={event => setCpfCnpj(maskCpfCnpj(event.target.value))}
-          />
+      <Container>
+        <div>
+          <TitlePage title="Portal de Atendimento" description="#esqueceuSuaSenha" />
+      
+          <form onSubmit={handleSubmit}>
+            <InputGroup
+              groupClass="mb-1"
+              name="cpfCnpj"
+              label="CPF/CNPJ"
+              type="text"
+              placeholder="CPF/CNPJ"
+              value={cpfCnpj}
+              onChange={event => setCpfCnpj(maskCpfCnpj(event.target.value))}
+            />
 
-          <InputGroup
-            groupClass="mb-3"
-            name="email"
-            label="E-mail"
-            type="email"
-            placeholder="E-mail de contato"
-            value={email}
-            onChange={event => setEmail(event.target.value)}
-          />
+            <InputGroup
+              groupClass="mb-3"
+              name="email"
+              label="E-mail"
+              type="email"
+              placeholder="E-mail de contato"
+              value={email}
+              onChange={event => setEmail(event.target.value)}
+            />
 
-          <Button type="submit" buttonClass="btn-primary" isLoading={isLoading || isWaiting} label={!isWaiting ? "Solicitar nova senha" : "Aguarde um momento"}></Button>
-          { 
-            isWaiting ? (
-              <div className="waiting">
-                Aguarde por {seconds} segundo(s) para realizar uma nova solicitação.
-              </div>
-              ) : null
-          }
-        </form>
+            <Button type="submit" buttonClass="btn-primary" isLoading={isLoading || isWaiting} label={!isWaiting ? "Solicitar nova senha" : "Aguarde um momento"}></Button>
+            { 
+              isWaiting ? (
+                <div className="waiting">
+                  Aguarde por {seconds} segundo(s) para realizar uma nova solicitação.
+                </div>
+                ) : null
+            }
+          </form>
 
-        <Options>
-          <Option link="/login" linkDescription="Clique aqui" description=" para acessar sua conta." />
-        </Options>
-      </Template>
+          <Options>
+            <Option link="/login" linkDescription="Clique aqui" description=" para acessar sua conta." />
+          </Options>
+        </div>
+      </Container>
     </>
   );
 }

@@ -4,9 +4,11 @@ import { FormEvent, useEffect, useState } from "react";
 import { InputGroup } from "../../../components/InputGroup";
 import { Button } from "../../../components/Button";
 import { Api } from "../../../services/api";
-import { Template } from "../components/Template";
-import { Option, Options } from "../components/Options";
+import { Template } from "../../../components/Template";
+import { Option, Options } from "../../../components/Options";
 import { useAlert } from "../../../contexts/AlertProvider";
+import { Container } from "./styles";
+import { TitlePage } from "../../../components/TitlePage";
 
 function ResetPassword() {
   const [newPassword, setNewPassword] = useState("");
@@ -51,38 +53,39 @@ function ResetPassword() {
 
   return (
     <>
-      <Template
-        title="Portal de Atendimento"
-        description="#definirNovaSenha"
-      >
-        <form onSubmit={handleSubmit}>
-          <InputGroup
-            groupClass="mb-1"
-            name="password"
-            label="Senha"
-            type="password"
-            placeholder="Nova senha"
-            value={newPassword}
-            onChange={event => setNewPassword(event.target.value)}
-          />
+      <Container>
+        <div>
+          <TitlePage title="Portal de Atendimento" description="#definirNovaSenha" />
+      
+          <form onSubmit={handleSubmit}>
+            <InputGroup
+              groupClass="mb-1"
+              name="password"
+              label="Senha"
+              type="password"
+              placeholder="Nova senha"
+              value={newPassword}
+              onChange={event => setNewPassword(event.target.value)}
+            />
 
-          <InputGroup
-            groupClass="mb-3"
-            name="passwordAgain"
-            label="Senha novamente"
-            type="password"
-            placeholder="Nova senha novamente"
-            value={newPasswordAgain}
-            onChange={event => setNewPasswordAgain(event.target.value)}
-          />
+            <InputGroup
+              groupClass="mb-3"
+              name="passwordAgain"
+              label="Senha novamente"
+              type="password"
+              placeholder="Nova senha novamente"
+              value={newPasswordAgain}
+              onChange={event => setNewPasswordAgain(event.target.value)}
+            />
 
-          <Button type="submit" buttonClass="btn-primary" isLoading={isLoading} label="Atualizar senha"></Button>
-        </form>
+            <Button type="submit" buttonClass="btn-primary" isLoading={isLoading} label="Atualizar senha"></Button>
+          </form>
 
-        <Options>
-          <Option link="/login" linkDescription="Clique aqui" description=" para acessar sua conta." />
-        </Options>
-      </Template>
+          <Options>
+            <Option link="/login" linkDescription="Clique aqui" description=" para acessar sua conta." />
+          </Options>
+        </div>
+      </Container>
     </>
   );
 }

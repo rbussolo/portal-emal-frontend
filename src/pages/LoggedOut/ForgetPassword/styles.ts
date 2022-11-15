@@ -1,11 +1,6 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  width: 100%;
-  min-height: calc(100vh - 8rem);
-
-  background-color: #e8e8e8;
-
   display: flex;
   justify-content: center;
 
@@ -31,4 +26,4 @@ export const Container = styled.div`
       }
     }
   }
-`
+`;
