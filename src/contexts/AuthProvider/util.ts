@@ -31,8 +31,8 @@ const LoginRequest = async (email: string, password: string): Promise<IRequestEr
 
 const RefreshToken = async (refresh_token: string): Promise<IRequestError | IRequestLogin> => {
   try {
-    const request = await Api.post('auth/refresh', undefined, { headers: { "Authorization": `Bearer ${refresh_token}`}});
-
+    const request = await Api.post('auth/refresh', { "refreshToken": true }, { headers: { "Authorization": `Bearer ${refresh_token}`}});
+    
     return request.data;
   } catch (error) {
     if (error instanceof AxiosError) {
