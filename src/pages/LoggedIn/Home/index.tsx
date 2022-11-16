@@ -2,6 +2,7 @@ import { useAuth } from "../../../contexts/AuthProvider/useAuth";
 
 function Home() {
   const auth = useAuth();
+  const user = auth.getCurrentUser()?.user;
 
   function handleLogout() {
     auth.logout();
@@ -13,11 +14,11 @@ function Home() {
         Você esta logado como:
       </h1>
       <h3>
-        Nome: {auth.user?.name} <br />
-        E-mail: {auth.user?.email} <br />
-        CPF/CNPJ: {auth.user?.cpf_cnpj} <br />
-        Celular: {auth.user?.cellphone} <br />
-        Tipo: {auth.user?.type} <br />
+        Nome: {user?.name} <br />
+        E-mail: {user?.email} <br />
+        CPF/CNPJ: {user?.cpf_cnpj} <br />
+        Celular: {user?.cellphone} <br />
+        Tipo: {user?.type} <br />
       </h3>
       <button onClick={handleLogout}>Deslogar!</button>
     </>

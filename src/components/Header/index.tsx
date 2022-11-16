@@ -18,7 +18,7 @@ function NavItem({ icon, description }: NavItemProps) {
 }
 
 function Header() {
-  const auth = useAuth();
+  const user = useAuth().getCurrentUser()?.user;
   
   return (
     <Navbar expand="lg">
@@ -26,7 +26,7 @@ function Header() {
         <NavbarBrand href="/">
           <Logo src={logo} alt="Logo" />
         </NavbarBrand>
-        { auth.user ? (
+        { user ? (
           <NavbarBrandContainer>
             <NavbarBrand href="/user/list">
               <NavItem icon="bi bi-person-fill-gear" description="Usuários" />

@@ -11,10 +11,11 @@ export interface IUser {
   refresh_token?: string;
 }
 
-export interface IContext extends IUser {
+export interface IContext {
+  getCurrentUser: () => IUser | null;
   authenticate: (email: string, password: string) => Promise<IRequestError | IRequestLogin>;
   logout: () => void;
-  refreshToken: () => Promise<IRequestError | IRequestLogin>;
+  generateAccessToken: () => Promise<IRequestError | IRequestLogin>;
 }
 
 export interface IAuthProvider {

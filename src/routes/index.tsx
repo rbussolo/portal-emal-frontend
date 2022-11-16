@@ -14,12 +14,8 @@ import { ForgetPassword } from '../pages/LoggedOut/ForgetPassword';
 import { Login } from '../pages/LoggedOut/Login';
 import { ResetPassword } from '../pages/LoggedOut/ResetPassword';
 
-interface RoutesProps {
-  children: JSX.Element;
-}
-
 const LoginLayout = () => {
-  const { user } = useAuth();
+  const user = useAuth().getCurrentUser();
 
   if (user) {
     return <Navigate to="/home" replace />;
@@ -35,9 +31,9 @@ const LoginLayout = () => {
 }
 
 const ProtectedRoute = () => {
-  const auth = useAuth();
+  const user = useAuth().getCurrentUser();
 
-  if (!auth.user) {
+  if (!user) {
     return <Navigate to="/" replace={true} />;
   }
 
@@ -51,7 +47,7 @@ const ProtectedRoute = () => {
 };
 
 const RoutesApp = () => {
-  const { user } = useAuth();
+  const user = useAuth().getCurrentUser();
 
   return (
     <>
