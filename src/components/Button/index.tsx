@@ -3,7 +3,7 @@ import { ButtonHTMLAttributes } from "react";
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   label: string;
   buttonClass: string;
-  isLoading: boolean;
+  isLoading?: boolean;
 }
 
 export function Button({ label, buttonClass, isLoading, ...rest }: ButtonProps) {

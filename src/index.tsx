@@ -6,6 +6,7 @@ import { RoutesApp } from './routes';
 import { AuthProvider } from './contexts/AuthProvider';
 import { TimerProvider } from './contexts/TimerData';
 import { AlertProvider } from './contexts/AlertProvider';
+import { BrowserRouter } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -13,12 +14,14 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <AuthProvider>
-      <TimerProvider>
-        <AlertProvider>
-          <RoutesApp />
-        </AlertProvider>
-      </TimerProvider>
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <TimerProvider>
+          <AlertProvider>
+            <RoutesApp />
+          </AlertProvider>
+        </TimerProvider>
+      </AuthProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );

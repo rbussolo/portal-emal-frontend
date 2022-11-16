@@ -1,20 +1,14 @@
-import { createContext, useEffect, useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { createContext, useMemo } from 'react';
 import jwt_decode from 'jwt-decode';
 import { IAuthProvider, IContext, IUser, IRequestError, IRequestLogin, AccessTokenDecoded } from './types';
 import { getUserLocalStorage, LoginRequest, RefreshToken, setUserLocalStorage } from './util';
+import { useLocalStorage } from '../LocalStorage';
 
 const AuthContext = createContext<IContext>({} as IContext);
 
 const AuthProvider = ({ children }: IAuthProvider) => {
-  const [user, setUser] = useState<IUser | null>();
-
-  useEffect(() => {
-    const user = getUserLocalStorage();
-
-    if (user) {
-      setUser(user);
-    }
-  }, []);
+  const [user, setUser] = useLocalStorage("user", null);
 
   async function authenticate(email: string, password: string): Promise<IRequestError | IRequestLogin> {
     if (email === "") 
@@ -74,8 +68,13 @@ const AuthProvider = ({ children }: IAuthProvider) => {
     setUserLocalStorage(null);
   }
 
+  const value = useMemo(
+    () => ({ ...user, authenticate, logout, refreshToken }),
+    [user]
+  );
+
   return (
-    <AuthContext.Provider value={{ ...user, authenticate, logout, refreshToken }}>
+    <AuthContext.Provider value={value}>
       { children }
     </AuthContext.Provider>
   )
