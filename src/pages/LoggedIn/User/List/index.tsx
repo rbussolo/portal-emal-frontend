@@ -1,41 +1,65 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import { Button } from "../../../../components/Button";
 import { ButtonsFilter } from "../../../../components/Button/styles";
 import { InputFilters, SelectFilters } from "../../../../components/InputGroup";
 
 import { TitlePage } from "../../../../components/TitlePage";
-import { Api } from "../../../../services/api";
+import { fetchUsers, User } from "../../../../services/users";
 import { ContainerFiltros, ContainerTable, Filtros } from "./styles";
 
-interface User {
-  id: number;
-  cpf_cnpj: string;
-  name: string;
-  email: string;
-  type: string;
-}
-
 const UserList = function () {
-  const [name, setName] = useState<string>();
-  const [email, setEmail] = useState<string>();
-  const [type, setType] = useState<string>();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [type, setType] = useState("");
   const [users, setUsers] = useState<User[]>();
-  const [page, setPage] = useState(1);
+  const [count, setCount] = useState(0);
+  const [pages, setPages] = useState<number[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  async function fetchData() {
+    const result = await fetchUsers({ page: currentPage, name, email, type });
+
+    setUsers(result.users);
+    setCount(result.count);
+  }
 
   useEffect(() => {
-    async function fetchData() {
-      const response = await Api.get('/users?page=' + page);
-      
-      setUsers(response.data.users);
-    }
-
     fetchData();
   }, []);
+
+  useEffect(() => {
+    let page = 0;
+    let pages = [];
+    
+    for(let i = 1; i <= count; i += 3) {
+      page += 1;
+      pages.push(page);
+    }
+    
+    setPages(pages);
+  }, [count]);
+
+  useEffect(() => {
+    fetchData();
+  }, [currentPage])
 
   function handleClean() {
     setName("");
     setEmail("");
     setType("");
+  }
+
+  async function handleSearch() {
+    if(currentPage !== 1) {
+      setCurrentPage(1);
+    } else {
+      await fetchData();
+    }
+  }
+
+  async function handlePage(page: number) {
+    setCurrentPage(page);
   }
 
   return (
@@ -66,25 +90,24 @@ const UserList = function () {
           </SelectFilters>
           
           <ButtonsFilter>
-            <Button buttonClass="btn-primary" isLoading={false} label="Consultar" />
+            <Button buttonClass="btn-primary" isLoading={false} label="Consultar" onClick={handleSearch} />
             <Button onClick={handleClean} buttonClass="btn-secondary" label="Limpar Filtros" />
           </ButtonsFilter>
         </Filtros>
       </ContainerFiltros>
       <ContainerTable>
         <div>
+          <div>Total de registros: { count }</div>
           <nav>
             <ul className="pagination">
-              <li className="page-item disabled">
-                <button className="page-link">Previous</button>
+              <li className={`page-item ${ currentPage > 1 ? '' : 'disabled' }`}>
+                <button className="page-link" onClick={() => handlePage(currentPage - 1)}>Pagina Anterior</button>
               </li>
-              <li className="page-item"><button className="page-link">1</button></li>
-              <li className="page-item active" aria-current="page">
-                <button className="page-link">2</button>
-              </li>
-              <li className="page-item"><button className="page-link">3</button></li>
-              <li className="page-item">
-                <button className="page-link">Next</button>
+              { pages.map(page => {
+                return <li key={page} className={`page-item ${currentPage === page ? 'active' : ''}`}><button className="page-link" onClick={() => handlePage(page)}>{ page }</button></li>
+              }) }
+              <li className={`page-item ${ currentPage * 3 < count ? '' : 'disabled'}` }>
+                <button className="page-link" onClick={() => handlePage(currentPage + 1)}>Próxima Pagina</button>
               </li>
             </ul>
           </nav>
@@ -113,54 +136,6 @@ const UserList = function () {
                 </tr>
               )
             }) }
-            <tr>
-              <td>1</td>
-              <td>003.102.011-95</td>
-              <td>Rodrigo Bussolo</td>
-              <td>E-mail</td>
-              <td>Administrador</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>003.102.011-95</td>
-              <td>Rodrigo Bussolo</td>
-              <td>E-mail</td>
-              <td>Administrador</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>003.102.011-95</td>
-              <td>Rodrigo Bussolo</td>
-              <td>E-mail</td>
-              <td>Administrador</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>003.102.011-95</td>
-              <td>Rodrigo Bussolo</td>
-              <td>E-mail</td>
-              <td>Administrador</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>003.102.011-95</td>
-              <td>Rodrigo Bussolo</td>
-              <td>E-mail</td>
-              <td>Administrador</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>003.102.011-95</td>
-              <td>Rodrigo Bussolo</td>
-              <td>E-mail</td>
-              <td>Administrador</td>
-              <td></td>
-            </tr>
           </tbody>
         </table>
       </ContainerTable>
