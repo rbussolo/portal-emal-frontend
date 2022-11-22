@@ -12,13 +12,13 @@ export const Api = axios.create({
 })
 
 Api.interceptors.request.use(
-  (config) => {
+  async (config) => {
     const user = getUserLocalStorage();
-
+    
     if (user?.access_token && config.url !== 'auth/refresh') {
       config.headers!['Authorization'] = `Bearer ${user?.access_token}`;
     }
-    
+
     return config;
   },
   (error) => {
@@ -34,7 +34,7 @@ Api.interceptors.response.use(
     const originalConfig = error.config;
     
     if (error.response) {
-      if (error.response.status === 401 && !originalConfig._retry) {
+      if (error.response.status === 401 && originalConfig.url !== "auth/refresh" && !originalConfig._retry) {
         originalConfig._retry = true;
         
         const result = await generateAccessToken();
@@ -43,7 +43,10 @@ Api.interceptors.response.use(
           return Promise.reject(result.message);
         }
 
-        Api.defaults.headers['Authorization'] = `Bearer ${result.access_token}`;
+        originalConfig.headers = {
+          ...originalConfig.headers,
+          authorization: `Bearer ${result.access_token}`,
+        };
 
         return Api(originalConfig);
       }

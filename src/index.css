@@ -26,3 +26,49 @@ h1, h2, h3, h4 {
 .navbar {
   height: 5rem;
 }
+
+.column-identifier {
+  font-weight: 700;
+}
+
+.column-action {
+  text-align: center;
+}
+
+tbody .column-action {
+  height: 0;
+  padding: 0;
+}
+
+tbody .column-action div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  height: 100%;
+}
+
+.icon-display {
+  color: #2980b9;
+}
+
+.icon-display:hover {
+  color: #3498db;
+}
+
+.icon-update {
+  color: #27ae60;
+}
+
+.icon-update:hover {
+  color: #2ecc71;
+}
+
+.icon-delete {
+  color: #c0392b;
+}
+
+.icon-delete:hover {
+  color: #e74c3c;
+}

@@ -3,63 +3,56 @@ import { useEffect, useState } from "react";
 import { Button } from "../../../../components/Button";
 import { ButtonsFilter } from "../../../../components/Button/styles";
 import { InputFilters, SelectFilters } from "../../../../components/InputGroup";
+import { IconDelete, IconDisplay, IconUpdate, List, Table, Td } from "../../../../components/Table";
 
 import { TitlePage } from "../../../../components/TitlePage";
-import { fetchUsers, User } from "../../../../services/users";
-import { ContainerFiltros, ContainerTable, Filtros } from "./styles";
+import { useAuth } from "../../../../contexts/AuthProvider/useAuth";
+import { fetchUsers, FiltersUsers, ListUsers, userTypeEnum } from "../../../../services/users";
+import { ContainerFiltros, Filtros } from "./styles";
 
 const UserList = function () {
+  const auth = useAuth();
+  const [filters, setFilters] = useState<FiltersUsers>({});
+  const [data, setData] = useState<ListUsers>({ count: 0, countPerPage: 0, users: [] });
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [type, setType] = useState("");
-  const [users, setUsers] = useState<User[]>();
-  const [count, setCount] = useState(0);
-  const [pages, setPages] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
-  async function fetchData() {
-    const result = await fetchUsers({ page: currentPage, name, email, type });
+  async function fetchData(filters: FiltersUsers) {
+    const result = await fetchUsers(filters, auth.logout);
 
-    setUsers(result.users);
-    setCount(result.count);
+    if(result) {
+      setData(result);
+    }
   }
 
   useEffect(() => {
-    fetchData();
+    fetchData(filters);
   }, []);
 
-  useEffect(() => {
-    let page = 0;
-    let pages = [];
-    
-    for(let i = 1; i <= count; i += 3) {
-      page += 1;
-      pages.push(page);
-    }
-    
-    setPages(pages);
-  }, [count]);
+  async function handleSearch() {
+    const newFilters: FiltersUsers = { email, name, type, page: 1 };
 
-  useEffect(() => {
-    fetchData();
-  }, [currentPage])
+    setCurrentPage(1);
+    setFilters(newFilters);
+
+    await fetchData(newFilters);
+  }
+
+  async function handlePage(page: number) {
+    const newFilters: FiltersUsers = { ...filters, page };
+
+    setCurrentPage(page);
+    setFilters(newFilters);
+
+    await fetchData(newFilters);
+  }
 
   function handleClean() {
     setName("");
     setEmail("");
     setType("");
-  }
-
-  async function handleSearch() {
-    if(currentPage !== 1) {
-      setCurrentPage(1);
-    } else {
-      await fetchData();
-    }
-  }
-
-  async function handlePage(page: number) {
-    setCurrentPage(page);
   }
 
   return (
@@ -83,7 +76,7 @@ const UserList = function () {
             onChange={event => setEmail(event.target.value)}
           />
           <SelectFilters label="Tipo" name="type" value={type} onChange={event => setType(event.target.value)}>            
-            <option defaultValue="">Todos</option>
+            <option value="" defaultValue="">Todos</option>
             <option value="client">Cliente</option>
             <option value="seller">Vendedor</option>
             <option value="admin">Administrador</option>
@@ -95,50 +88,40 @@ const UserList = function () {
           </ButtonsFilter>
         </Filtros>
       </ContainerFiltros>
-      <ContainerTable>
-        <div>
-          <div>Total de registros: { count }</div>
-          <nav>
-            <ul className="pagination">
-              <li className={`page-item ${ currentPage > 1 ? '' : 'disabled' }`}>
-                <button className="page-link" onClick={() => handlePage(currentPage - 1)}>Pagina Anterior</button>
-              </li>
-              { pages.map(page => {
-                return <li key={page} className={`page-item ${currentPage === page ? 'active' : ''}`}><button className="page-link" onClick={() => handlePage(page)}>{ page }</button></li>
-              }) }
-              <li className={`page-item ${ currentPage * 3 < count ? '' : 'disabled'}` }>
-                <button className="page-link" onClick={() => handlePage(currentPage + 1)}>Próxima Pagina</button>
-              </li>
-            </ul>
-          </nav>
-        </div>
-        <table className="table table-striped table-hover table-bordered">
+      <List count={data.count} countPerPage={data.countPerPage} currentPage={currentPage} onChangePage={handlePage}>
+        <Table>
           <thead>
             <tr>
-              <td>Id</td>
-              <td>CPF/CNPJ</td>
-              <td>Nome</td>
-              <td>E-mail</td>
-              <td>Tipo</td>
-              <td>Ações</td>
+              <Td isIdentifier>Id</Td>
+              <Td>CPF/CNPJ</Td>
+              <Td>Nome</Td>
+              <Td>E-mail</Td>
+              <Td>Tipo</Td>
+              <Td isAction>Ações</Td>
             </tr>
           </thead>
           <tbody>
-            { users?.map((user, index) => {
+            {data.users?.map((user, index) => {
               return (
                 <tr key={user.id}>
-                  <td>{user.id}</td>
-                  <td>{user.cpf_cnpj}</td>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>{user.type}</td>
-                  <td></td>
+                  <Td isIdentifier>{user.id}</Td>
+                  <Td>{user.cpf_cnpj}</Td>
+                  <Td>{user.name}</Td>
+                  <Td>{user.email}</Td>
+                  <Td>{userTypeEnum[user.type]}</Td>
+                  <Td isAction>
+                    <div>
+                      <IconDisplay link="display" />
+                      <IconUpdate link="update" />
+                      <IconDelete link="delete" />
+                    </div>
+                  </Td>
                 </tr>
               )
-            }) }
+            })}
           </tbody>
-        </table>
-      </ContainerTable>
+        </Table>
+      </List>
     </>
   );
 }

@@ -5,4 +5,6 @@ export const Container = styled.div`
   min-height: calc(100vh - 8rem);
 
   background-color: #f5f6f6;
+
+  padding-bottom: 2rem;
 `

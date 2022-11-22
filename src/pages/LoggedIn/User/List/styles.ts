@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 const ContainerFiltros = styled.div`
   padding-top: 2rem;
+  padding-bottom: 2rem;
 `
 
 const Filtros = styled.div`
@@ -16,18 +17,4 @@ const Filtros = styled.div`
   }
 `
 
-const ContainerTable = styled.div`
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-
-  padding: 1.5rem;
-  width: 100%;
-  max-width: calc(100% - 3rem);
-
-  margin-left: auto;
-  margin-right: auto;
-
-  background-color: #FFF;
-`
-
-export { ContainerFiltros, ContainerTable, Filtros };
+export { ContainerFiltros, Filtros };

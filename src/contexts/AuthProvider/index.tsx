@@ -3,6 +3,7 @@ import { createContext, useMemo } from 'react';
 import jwt_decode from 'jwt-decode';
 import { IAuthProvider, IContext, IUser, IRequestError, IRequestLogin, AccessTokenDecoded } from './types';
 import { getUserLocalStorage, LoginRequest, RefreshToken, setUserLocalStorage } from './util';
+import { useNavigate } from 'react-router-dom';
 
 export async function generateAccessToken(): Promise<IRequestError | IRequestLogin> {
   const user = getUserLocalStorage();
@@ -33,6 +34,8 @@ export async function generateAccessToken(): Promise<IRequestError | IRequestLog
 const AuthContext = createContext<IContext>({} as IContext);
 
 const AuthProvider = ({ children }: IAuthProvider) => {
+  const navigate = useNavigate();
+
   async function authenticate(email: string, password: string): Promise<IRequestError | IRequestLogin> {
     if (email === "") 
       return { message: "É necessário informar o E-mail do Usuário!" };
@@ -59,6 +62,7 @@ const AuthProvider = ({ children }: IAuthProvider) => {
 
   function logout() {
     setUserLocalStorage(null);
+    navigate("/login");
   }
 
   function getCurrentUser() {
