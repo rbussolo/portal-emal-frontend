@@ -81,31 +81,49 @@ function Td({ isIdentifier = false, isAction = false, children, ...rest }: TdPro
 }
 
 interface IconProps {
-  link: string;
+  onclick?: (event: React.MouseEvent<HTMLElement>) => void;
+  to?: string;
+  state?: any;
 }
 
-function IconDisplay({ link }: IconProps) {
-  return (
-    <Link to={link}>
-      <i className="bi bi-eye icon-display"></i>
-    </Link>
-  )
+function IconDisplay({ to, state, onclick }: IconProps) {
+  if(to) {
+    return (
+      <Link to={to} state={state}>
+        <i className="bi bi-eye icon-display"></i>
+      </Link>
+    )
+  }
+
+  return null;
 }
 
-function IconUpdate({ link }: IconProps) {
-  return (
-    <Link to={link}>
-      <i className="bi bi-pencil icon-update"></i>
-    </Link>
-  )
+function IconUpdate({ to, state, onclick }: IconProps) {
+  if (to) {
+    return (
+      <Link to={to} state={state}>
+        <i className="bi bi-pencil icon-update"></i>
+      </Link>
+    )
+  }
+
+  return null;
 }
 
-function IconDelete({ link }: IconProps) {
-  return (
-    <Link to={link}>
-      <i className="bi bi-trash3 icon-delete"></i>
-    </Link>
-  )
+function IconDelete({ to, state, onclick }: IconProps) {
+  if (to) {
+    return (
+      <Link to={to} state={state}> 
+        <i className="bi bi-trash3 icon-delete"></i>
+      </Link>
+    )
+  }
+
+  if (onclick) {
+    return <i onClick={onclick} className="bi bi-trash3 icon-delete"></i>
+  }
+
+  return null;
 }
 
 

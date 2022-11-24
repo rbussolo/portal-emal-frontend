@@ -19,6 +19,8 @@ Api.interceptors.request.use(
       config.headers!['Authorization'] = `Bearer ${user?.access_token}`;
     }
 
+    console.log(config);
+
     return config;
   },
   (error) => {
@@ -31,6 +33,8 @@ Api.interceptors.response.use(
     return response;
   },
   async (error) => {
+    console.log(error);
+    
     const originalConfig = error.config;
     
     if (error.response) {

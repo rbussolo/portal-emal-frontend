@@ -39,4 +39,15 @@ function maskCpfCnpj(cpfCnpj: string): string { //MASCARA PARA CPF E CNPJ
   return cpfCnpj;
 }
 
-export { maskCnpj, maskCpf, maskCpfCnpj };
+function maskCelular(celular: string): string { // (99) 99999-9999
+  celular = celular.replace(/\D/g, "");
+  celular = celular.replace(/(\d{1,11})\d*/g, "$1");
+
+  celular = celular.replace(/\D/g, "");
+  celular = celular.replace(/(\d{2})(\d)/, "($1) $2");
+  celular = celular.replace(/(\d{5})(\d)/, "$1-$2");
+  
+  return celular;
+}
+
+export { maskCnpj, maskCpf, maskCpfCnpj, maskCelular };

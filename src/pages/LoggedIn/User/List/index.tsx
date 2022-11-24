@@ -1,17 +1,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "../../../../components/Button";
 import { ButtonsFilter } from "../../../../components/Button/styles";
 import { InputFilters, SelectFilters } from "../../../../components/InputGroup";
 import { IconDelete, IconDisplay, IconUpdate, List, Table, Td } from "../../../../components/Table";
 
 import { TitlePage } from "../../../../components/TitlePage";
+import { useAlert } from "../../../../contexts/AlertProvider";
 import { useAuth } from "../../../../contexts/AuthProvider/useAuth";
-import { fetchUsers, FiltersUsers, ListUsers, userTypeEnum } from "../../../../services/users";
+import { useLoading } from "../../../../contexts/LoadingProvider";
+import { deleteUser, fetchUsers, FiltersUsers, ListUsers, userTypeEnum } from "../../../../services/users";
 import { ContainerFiltros, Filtros } from "./styles";
 
 const UserList = function () {
   const auth = useAuth();
+  const navigate = useNavigate();
+  const alert = useAlert();
+  const load = useLoading();
+  
   const [filters, setFilters] = useState<FiltersUsers>({});
   const [data, setData] = useState<ListUsers>({ count: 0, countPerPage: 0, users: [] });
   const [name, setName] = useState("");
@@ -55,11 +62,31 @@ const UserList = function () {
     setType("");
   }
 
+  function handleDelete(id: number) {
+    alert.showConfirm("Realmente deseja remover este registro?", async () => {
+      load.showLoading();
+
+      const result = await deleteUser(id, auth.logout);
+
+      if(result) {
+        if ('message' in result) {
+          alert.showError(result.message);
+        } else {
+          await fetchData(filters);
+
+          alert.showSuccess("Registro removido com sucesso!");
+        }
+      }
+
+      load.hideLoading();
+    });
+  }
+
   return (
     <>
       <ContainerFiltros className="container">
         <Filtros>
-          <TitlePage title="Pedidos"/>
+          <TitlePage title="Usuários" action={{ description: "Novo Usuário", onClick: () => { navigate("/user/create", { state: { mode: 'insert' }})}}}/>
 
           <hr />
 
@@ -111,9 +138,9 @@ const UserList = function () {
                   <Td>{userTypeEnum[user.type]}</Td>
                   <Td isAction>
                     <div>
-                      <IconDisplay link="display" />
-                      <IconUpdate link="update" />
-                      <IconDelete link="delete" />
+                      <IconDisplay to="/user/create" state={{ mode: 'display', id: user.id }} />
+                      <IconUpdate to="/user/create" state={{ mode: 'update', id: user.id }} />
+                      <IconDelete onclick={(e) => { handleDelete(user.id!) }} />
                     </div>
                   </Td>
                 </tr>

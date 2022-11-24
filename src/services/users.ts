@@ -1,3 +1,4 @@
+import { IRequestError, IRequestSuccess } from "../contexts/AuthProvider/types";
 import { Api } from "./api";
 
 export interface FiltersUsers {
@@ -7,7 +8,7 @@ export interface FiltersUsers {
   type?: string;
 }
 
-interface UserType {
+export interface UserType {
   client: string;
   seller: string;
   adm: string;
@@ -20,11 +21,13 @@ export const userTypeEnum: UserType = {
 }
 
 export interface User {
-  id: number;
+  id?: number;
   cpf_cnpj: string;
   name: string;
   email: string;
   type: keyof UserType;
+  cellphone?: string;
+  password?: string;
 }
 
 export interface ListUsers {
@@ -43,4 +46,68 @@ async function fetchUsers({ page, name, email, type }: FiltersUsers, logout: () 
   }
 }
 
-export { fetchUsers }
+async function fetchUserById(id: number, logout: () => void): Promise<User | undefined | IRequestError>{
+  try {
+    const response = await Api.get("/users/" + id);
+
+    if (response.status >= 300) {
+      return response.data as IRequestError;
+    }
+
+    return response.data as User;
+  } catch (error) {
+    logout();
+  }
+}
+
+async function saveUser({ id, cpf_cnpj, name, email, type, cellphone, password }: User, logout: () => void): Promise<User | undefined | IRequestError> {
+  if (id) {
+    return updateUser({ id, cpf_cnpj, name, email, type, cellphone }, logout);
+  }
+
+  return newUser({ cpf_cnpj, name, email, type, cellphone, password }, logout);
+}
+
+async function newUser({ cpf_cnpj, name, email, type, cellphone, password }: User, logout: () => void): Promise<User | undefined | IRequestError> {
+  try {
+    const response = await Api.post("/users", { cpf_cnpj, name, email, type, cellphone, password });
+
+    if (response.status >= 300) {
+      return response.data as IRequestError;
+    }
+
+    return response.data as User;
+  } catch (error) {
+    logout();
+  }
+}
+
+async function updateUser({ id, cpf_cnpj, name, email, type, cellphone }: User, logout: () => void): Promise<User | undefined | IRequestError> {
+  try {
+    const response = await Api.put("/users/" + id, { cpf_cnpj, name, email, type, cellphone });
+
+    if (response.status >= 300) {
+      return response.data as IRequestError;
+    }
+
+    return response.data as User;
+  } catch (error) {
+    logout();
+  }
+}
+
+async function deleteUser(id: number, logout: () => void): Promise<IRequestError | IRequestSuccess | undefined> {
+  try {
+    const response = await Api.delete("/users/" + id);
+
+    if (response.status >= 300) {
+      return response.data as IRequestError;
+    }
+
+    return response.data as IRequestSuccess;
+  } catch (error) {
+    logout();
+  }
+}
+
+export { fetchUsers, fetchUserById, saveUser, deleteUser }

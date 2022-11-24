@@ -26,6 +26,10 @@ export interface IRequestError {
   message: string;
 }
 
+export interface IRequestSuccess {
+  success: boolean;
+}
+
 export interface IRequestLogin {
   access_token: string;
   refresh_token: string;

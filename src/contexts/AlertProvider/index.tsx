@@ -14,6 +14,7 @@ export interface IAlertContext {
   showSuccess: (message: string) => void;
   showInfo: (message: string) => void;
   showModal: (message: string, type: string) => void;
+  showConfirm: (message: string, onConfirmed?: () => void, onNotConfirmed?: () => void) => void;
 }
 
 const AlertContext = createContext<IAlertContext>({} as IAlertContext);
@@ -55,8 +56,27 @@ const AlertProvider = ({ children }: IAlertProvider) => {
     });
   }
 
+  function showConfirm(message: string, onConfirmed?: () => void, onNotConfirmed?: () => void): void {
+    Swal.fire({
+      title: "Confirmação!",
+      html: message,
+      icon: "info",
+      showCancelButton: true,
+      cancelButtonText: "Fechar",
+      confirmButtonText: "Confirmar"
+    }).then((result) => {
+      if (result.isConfirmed && onConfirmed) {
+        onConfirmed();
+      }
+
+      if (!result.isConfirmed && onNotConfirmed) {
+        onNotConfirmed();
+      }
+    });
+  }
+
   return (
-    <AlertContext.Provider value={{ showError, showSuccess, showInfo, showModal }}>
+    <AlertContext.Provider value={{ showError, showSuccess, showInfo, showModal, showConfirm }}>
       {children}
     </AlertContext.Provider>
   )

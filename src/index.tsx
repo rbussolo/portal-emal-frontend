@@ -7,6 +7,7 @@ import { AuthProvider } from './contexts/AuthProvider';
 import { TimerProvider } from './contexts/TimerData';
 import { AlertProvider } from './contexts/AlertProvider';
 import { BrowserRouter } from 'react-router-dom';
+import { LoadingProvider } from './contexts/LoadingProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
@@ -16,7 +17,9 @@ root.render(
       <AuthProvider>
         <TimerProvider>
           <AlertProvider>
-            <RoutesApp />
+            <LoadingProvider>
+              <RoutesApp />
+            </LoadingProvider>
           </AlertProvider>
         </TimerProvider>
       </AuthProvider>

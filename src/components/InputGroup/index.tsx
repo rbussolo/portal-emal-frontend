@@ -27,7 +27,7 @@ export function InputGroup({ name, label, inputClass, groupClass, ...rest }: Inp
 export function InputFilters({ name, label, inputClass, groupClass, ...rest }: InputGroupProps) {
   return (
     <div className={`mb-3 row ${groupClass}`}>
-      <label htmlFor={name} className="col-sm-3 col-form-label text-end">{label}:</label>
+      <label htmlFor={name} className="col-sm-3 col-form-label">{label}:</label>
       <div className="col-sm-9">
         <input id={name} name={name} className={`form-control ${inputClass}`} {...rest} />
       </div>
@@ -38,10 +38,34 @@ export function InputFilters({ name, label, inputClass, groupClass, ...rest }: I
 export function SelectFilters({ name, label, groupClass, inputClass, children, ...rest }: SelectGroupProps) {
   return (
     <div className={`mb-3 row ${groupClass}`}>
-      <label htmlFor={name} className="col-sm-3 col-form-label text-end">{label}:</label>
+      <label htmlFor={name} className="col-sm-3 col-form-label">{label}:</label>
       <div className="col-sm-9">
         <select className={`form-select ${inputClass}`} {...rest}>
           { children }
+        </select>
+      </div>
+    </div>
+  )
+}
+
+export function InputForm({ name, label, inputClass, groupClass, ...rest }: InputGroupProps) {
+  return (
+    <div className={`mb-3 row ${groupClass}`}>
+      <label htmlFor={name} className="col-sm-3 col-form-label">{label}:</label>
+      <div className="col-sm-9">
+        <input id={name} name={name} className={`form-control ${inputClass}`} {...rest} />
+      </div>
+    </div>
+  )
+}
+
+export function SelectForm({ name, label, groupClass, inputClass, children, ...rest }: SelectGroupProps) {
+  return (
+    <div className={`mb-3 row ${groupClass}`}>
+      <label htmlFor={name} className="col-sm-3 col-form-label">{label}:</label>
+      <div className="col-sm-9">
+        <select className={`form-select ${inputClass}`} {...rest}>
+          {children}
         </select>
       </div>
     </div>
