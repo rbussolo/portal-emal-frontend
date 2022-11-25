@@ -62,10 +62,10 @@ async function fetchUserById(id: number, logout: () => void): Promise<User | und
 
 async function saveUser({ id, cpf_cnpj, name, email, type, cellphone, password }: User, logout: () => void): Promise<User | undefined | IRequestError> {
   if (id) {
-    return updateUser({ id, cpf_cnpj, name, email, type, cellphone }, logout);
+    return await updateUser({ id, cpf_cnpj, name, email, type, cellphone }, logout);
   }
 
-  return newUser({ cpf_cnpj, name, email, type, cellphone, password }, logout);
+  return await newUser({ cpf_cnpj, name, email, type, cellphone, password }, logout);
 }
 
 async function newUser({ cpf_cnpj, name, email, type, cellphone, password }: User, logout: () => void): Promise<User | undefined | IRequestError> {

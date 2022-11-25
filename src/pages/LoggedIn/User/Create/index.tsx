@@ -57,6 +57,18 @@ const UserCreate = function() {
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
+    const form = event.target as HTMLFormElement;
+
+    if(!form.checkValidity()) {
+      form.classList.add('was-validated');
+
+      alert.showError('Preencha todos os campos obrigatórios!');
+      
+      return;
+    }
+
+    form.classList.remove('was-validated');
+    
     load.showLoading();
 
     const userType: keyof UserType = type as keyof UserType;
@@ -78,7 +90,7 @@ const UserCreate = function() {
 
   return (
     <Container className="container">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="needs-validation" noValidate>
         <TitlePage title="Cadastro de Usuário" />
 
         <hr />
@@ -89,6 +101,7 @@ const UserCreate = function() {
           disabled={disabled}
           value={name}
           onChange={(e) => setName(e.target.value.toUpperCase())}
+          required
         />
 
         <InputForm label="E-mail" name="email"
@@ -97,6 +110,7 @@ const UserCreate = function() {
           disabled={disabled}
           value={email}
           onChange={(e) => setEmail(e.target.value.toLowerCase())}
+          required
         />
 
         <InputForm label="CPF/CNPJ" name="cpf_cnpj"
@@ -105,6 +119,7 @@ const UserCreate = function() {
           disabled={disabled}
           value={cpfCnpj}
           onChange={(e) => setCpfCnpj(maskCpfCnpj(e.target.value))}
+          required
         />
 
         <InputForm label="Celular" name="cellphone"
@@ -113,9 +128,11 @@ const UserCreate = function() {
           disabled={disabled}
           value={cellphone}
           onChange={(e) => setCellphone(maskCelular(e.target.value))}
+          required
         />
 
-        <SelectForm label="Tipo" name="type" value={type} disabled={disabled} onChange={(e) => setType(e.target.value)}>
+        <SelectForm label="Tipo" name="type" value={type} disabled={disabled} onChange={(e) => setType(e.target.value)} required>
+          <option value="" defaultValue="">Selecione</option>
           <option value="client">Cliente</option>
           <option value="seller">Vendedor</option>
           <option value="admin">Administrador</option>
@@ -127,6 +144,7 @@ const UserCreate = function() {
             placeholder="Senha do usuário"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
         ) : null }
 

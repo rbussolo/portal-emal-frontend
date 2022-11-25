@@ -11,6 +11,7 @@ import { useAlert } from "../../../../contexts/AlertProvider";
 import { useAuth } from "../../../../contexts/AuthProvider/useAuth";
 import { useLoading } from "../../../../contexts/LoadingProvider";
 import { deleteUser, fetchUsers, FiltersUsers, ListUsers, userTypeEnum } from "../../../../services/users";
+import { maskCpfCnpj } from "../../../../utils/mask";
 import { ContainerFiltros, Filtros } from "./styles";
 
 const UserList = function () {
@@ -132,7 +133,7 @@ const UserList = function () {
               return (
                 <tr key={user.id}>
                   <Td isIdentifier>{user.id}</Td>
-                  <Td>{user.cpf_cnpj}</Td>
+                  <Td>{maskCpfCnpj(user.cpf_cnpj)}</Td>
                   <Td>{user.name}</Td>
                   <Td>{user.email}</Td>
                   <Td>{userTypeEnum[user.type]}</Td>
