@@ -5,10 +5,11 @@ import { Button } from "../../../components/Button";
 import { maskCnpj } from "../../../utils/mask";
 import { useTimer } from "../../../contexts/TimerData";
 import { Option, Options } from "../../../components/Options";
-import { Api } from "../../../services/api";
+import { api } from "../../../services/api";
 import { useAlert } from "../../../contexts/AlertProvider";
 import { ButtonLikeLink, Container } from "./styles";
 import { TitlePage } from "../../../components/TitlePage";
+import { IRequestError } from "../../../contexts/AuthProvider/types";
 
 function FirstAccess() {
   const [cnpj, setCnpj] = useState("");
@@ -44,11 +45,7 @@ function FirstAccess() {
     event.preventDefault();
     setLoading(true);
 
-    const response = await Api.post('user/migrate', { cpf_cnpj: cnpj, email });
-    
-    if (response.status >= 400) {
-      alert.showError(response.data.message);
-    } else {
+    api.post('auth/migrate', { cpf_cnpj: cnpj, email }).then(() => {
       alert.showSuccess("Foi enviado um e-mail com instruções para continuar o cadastro, favor verifique.");
       setWaiting(true);
 
@@ -59,21 +56,25 @@ function FirstAccess() {
         update: seconds => setSeconds(seconds),
         stop: () => { setWaiting(false); }
       });
-    }
-
-    setLoading(false);
+    }).catch(err => {
+      alert.showError({ error: err.response.data as IRequestError });
+    }).finally(() => {
+      setLoading(false);
+    });
   }
 
   async function handleForgetEmail() {
-    if (!cnpj) return alert.showError("É necessário informar o CNPJ da empresa!");
+    if (!cnpj) return alert.showError({ message: "É necessário informar o CNPJ da empresa!" });
 
-    const response = await Api.post('user/forgotEmail', { cpf_cnpj: cnpj });
+    setLoading(true);
 
-    if (response.status >= 400) {
-      alert.showError(response.data.message);
-    } else {
+    api.post('auth/forgotEmail', { cpf_cnpj: cnpj }).then(response => {
       alert.showInfo("O e-mail cadastrado para este CNPJ é: <br /><b>" + response.data.email + "</b>");
-    }
+    }).catch(err => {
+      alert.showError({ error: err.response.data as IRequestError });
+    }).finally(() => {
+      setLoading(false);
+    });
   }
 
   return (

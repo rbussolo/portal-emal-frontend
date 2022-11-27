@@ -5,10 +5,11 @@ import { Button } from "../../../components/Button";
 import { useTimer } from "../../../contexts/TimerData";
 import { maskCpfCnpj } from "../../../utils/mask";
 import { Option, Options } from "../../../components/Options";
-import { Api } from "../../../services/api";
+import { api } from "../../../services/api";
 import { useAlert } from "../../../contexts/AlertProvider";
 import { TitlePage } from "../../../components/TitlePage";
 import { Container } from "./styles";
+import { IRequestError } from "../../../contexts/AuthProvider/types";
 
 function ForgetPassword() {
   const [cpfCnpj, setCpfCnpj] = useState("");
@@ -40,15 +41,11 @@ function ForgetPassword() {
     }
   }, []);
 
-  async function handleSubmit(event: FormEvent) {
+  function handleSubmit(event: FormEvent) {
     event.preventDefault();
     setLoading(true);
 
-    const response = await Api.post('user/forgotPassword', { cpf_cnpj: cpfCnpj, email });
-
-    if (response.status >= 400) {
-      alert.showError(response.data.message);
-    } else {
+    api.post('auth/forgotPassword', { cpf_cnpj: cpfCnpj, email }).then(response => {
       alert.showSuccess("Foi enviado um e-mail com instruções para resetar sua senha, favor verifique.");
       setWaiting(true);
 
@@ -59,9 +56,13 @@ function ForgetPassword() {
         update: seconds => setSeconds(seconds),
         stop: () => { setWaiting(false); }
       });
-    }
+    }).catch(err => {
+      const result = err.response.data as IRequestError;
 
-    setLoading(false);
+      alert.showError({ error: result });
+    }).finally(() => {
+      setLoading(false);
+    });
   }
 
   return (

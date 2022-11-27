@@ -6,9 +6,10 @@ import { ButtonsFilter } from "../../../../components/Button/styles";
 import { InputForm, SelectForm } from "../../../../components/InputGroup";
 import { TitlePage } from "../../../../components/TitlePage";
 import { useAlert } from "../../../../contexts/AlertProvider";
-import { useAuth } from "../../../../contexts/AuthProvider/useAuth";
+import { IRequestError } from "../../../../contexts/AuthProvider/types";
 import { useLoading } from "../../../../contexts/LoadingProvider";
-import { fetchUserById, saveUser, UserType } from "../../../../services/users";
+import { api } from "../../../../services/api";
+import { User, UserType } from "../../../../services/users";
 import { maskCelular, maskCpfCnpj } from "../../../../utils/mask";
 import { Container } from "./styles";
 
@@ -18,7 +19,6 @@ interface UserCreateParams {
 }
 
 const UserCreate = function() {
-  const auth = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { id, mode } = location.state as UserCreateParams;
@@ -33,25 +33,23 @@ const UserCreate = function() {
   const [type, setType] = useState("");
   const [password, setPassword] = useState("");
 
-  async function fetchData(id: number) {
-    const result = await fetchUserById(id, auth.logout);
-
-    if (result) {
-      if ('message' in result) {
-        alert.showError(result.message);
-      } else {
-        setName(result.name);
-        setEmail(result.email);
-        setCpfCnpj(maskCpfCnpj(result.cpf_cnpj));
-        setCellphone(maskCelular(result.cellphone || ''));
-        setType(result.type);
-      }
-    }
-  }
-
   useEffect(() => {
     if(mode !== 'insert' && id) {
-      fetchData(id);
+      load.showLoading();
+
+      api.get("/users/" + id).then(response => {
+        const user = response.data as User;
+
+        setName(user.name);
+        setEmail(user.email);
+        setCpfCnpj(maskCpfCnpj(user.cpf_cnpj));
+        setCellphone(maskCelular(user.cellphone || ''));
+        setType(user.type);
+      }).catch(err => {
+        alert.showError({ error: err.response.data as IRequestError});
+      }).finally(() => {
+        load.hideLoading();
+      });
     }
   }, []);
 
@@ -62,9 +60,7 @@ const UserCreate = function() {
     if(!form.checkValidity()) {
       form.classList.add('was-validated');
 
-      alert.showError('Preencha todos os campos obrigatórios!');
-      
-      return;
+      return alert.showError({ message: 'Preencha todos os campos obrigatórios!' });
     }
 
     form.classList.remove('was-validated');
@@ -73,19 +69,30 @@ const UserCreate = function() {
 
     const userType: keyof UserType = type as keyof UserType;
 
-    setTimeout(() => load.hideLoading(), 5000);
-
-    const result = await saveUser({ id, cpf_cnpj: cpfCnpj, name, email, type: userType, cellphone, password }, auth.logout);
-
-    if (result) {
-      if ('message' in result) {
-        alert.showError(result.message);
-      } else {
-        navigate("/user/list");
-      }
+    let method = 'post';
+    let url = "/users";
+    let user: User = {
+      id, 
+      cpf_cnpj: cpfCnpj,
+      name,
+      email,
+      type: userType,
+      cellphone,
+      password
     }
 
-    load.hideLoading();
+    if (mode !== 'insert') {
+      method = 'put';
+      url = "/users/" + id;
+    }
+
+    api.request({ url, method, data: user }).then(response => {
+      navigate("/user/list", { state: { success: true }});
+    }).catch(err => {
+      alert.showError({ error: err.response.data as IRequestError });
+    }).finally(() => {
+      load.hideLoading();
+    });
   }
 
   return (

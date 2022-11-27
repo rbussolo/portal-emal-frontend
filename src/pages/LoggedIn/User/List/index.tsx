@@ -8,14 +8,14 @@ import { IconDelete, IconDisplay, IconUpdate, List, Table, Td } from "../../../.
 
 import { TitlePage } from "../../../../components/TitlePage";
 import { useAlert } from "../../../../contexts/AlertProvider";
-import { useAuth } from "../../../../contexts/AuthProvider/useAuth";
+import { IRequestError } from "../../../../contexts/AuthProvider/types";
 import { useLoading } from "../../../../contexts/LoadingProvider";
-import { deleteUser, fetchUsers, FiltersUsers, ListUsers, userTypeEnum } from "../../../../services/users";
+import { api } from "../../../../services/api";
+import { FiltersUsers, ListUsers, userTypeEnum } from "../../../../services/users";
 import { maskCpfCnpj } from "../../../../utils/mask";
 import { ContainerFiltros, Filtros } from "./styles";
 
 const UserList = function () {
-  const auth = useAuth();
   const navigate = useNavigate();
   const alert = useAlert();
   const load = useLoading();
@@ -27,12 +27,16 @@ const UserList = function () {
   const [type, setType] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  async function fetchData(filters: FiltersUsers) {
-    const result = await fetchUsers(filters, auth.logout);
+  function fetchData(filters: FiltersUsers) {
+    load.showLoading();
 
-    if(result) {
-      setData(result);
-    }
+    api.get("/users", { params: filters }).then(response => {
+      setData(response.data as ListUsers);
+    }).catch(err => {
+      alert.showError({ error: err.response.data as IRequestError });
+    }).finally(() => {
+      load.hideLoading();
+    });
   }
 
   useEffect(() => {
@@ -45,7 +49,7 @@ const UserList = function () {
     setCurrentPage(1);
     setFilters(newFilters);
 
-    await fetchData(newFilters);
+    fetchData(newFilters);
   }
 
   async function handlePage(page: number) {
@@ -54,7 +58,7 @@ const UserList = function () {
     setCurrentPage(page);
     setFilters(newFilters);
 
-    await fetchData(newFilters);
+    fetchData(newFilters);
   }
 
   function handleClean() {
@@ -64,22 +68,18 @@ const UserList = function () {
   }
 
   function handleDelete(id: number) {
-    alert.showConfirm("Realmente deseja remover este registro?", async () => {
+    alert.showConfirm("Realmente deseja remover este registro?", () => {
       load.showLoading();
 
-      const result = await deleteUser(id, auth.logout);
+      api.delete("/users/" + id).then(() => {
+        fetchData(filters);
 
-      if(result) {
-        if ('message' in result) {
-          alert.showError(result.message);
-        } else {
-          await fetchData(filters);
-
-          alert.showSuccess("Registro removido com sucesso!");
-        }
-      }
-
-      load.hideLoading();
+        alert.showSuccess("Registro removido com sucesso!");
+      }).catch(err => {
+        alert.showError({ error: err.response.data as IRequestError });
+      }).finally(() => {
+        load.hideLoading();
+      });
     });
   }
 

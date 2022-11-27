@@ -15,7 +15,6 @@ export interface IContext {
   getCurrentUser: () => IUser | null;
   authenticate: (email: string, password: string) => Promise<IRequestError | IRequestLogin>;
   logout: () => void;
-  generateAccessToken: () => Promise<IRequestError | IRequestLogin>;
 }
 
 export interface IAuthProvider {
@@ -23,7 +22,11 @@ export interface IAuthProvider {
 }
 
 export interface IRequestError {
+  status?: number;
+  code?: string;
   message: string;
+  messages?: string[];
+  additionalInfo?: any;
 }
 
 export interface IRequestSuccess {

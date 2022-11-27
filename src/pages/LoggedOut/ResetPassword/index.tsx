@@ -3,51 +3,49 @@ import { useNavigate, useParams } from "react-router-dom";
 import { FormEvent, useEffect, useState } from "react";
 import { InputGroup } from "../../../components/InputGroup";
 import { Button } from "../../../components/Button";
-import { Api } from "../../../services/api";
+import { api } from "../../../services/api";
 import { Option, Options } from "../../../components/Options";
 import { useAlert } from "../../../contexts/AlertProvider";
 import { Container } from "./styles";
 import { TitlePage } from "../../../components/TitlePage";
+import { useLoading } from "../../../contexts/LoadingProvider";
+import { IRequestError } from "../../../contexts/AuthProvider/types";
 
 function ResetPassword() {
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordAgain, setNewPasswordAgain] = useState("");
-  const [isLoading, setLoading] = useState(false);
-
+  
   const { token } = useParams();
   const navigate = useNavigate();
   const alert = useAlert();
+  const loading = useLoading();
 
   useEffect(() => {
-    async function checkToken() {
-      try {
-        await Api.post("user/checkToken/" + token);
-      } catch(error) {
-        navigate("/login", { state: { passwordChanged: true } });
-      }
-    }
+    loading.showLoading();
 
-    checkToken();
+    api.post("auth/checkToken/" + token).catch(() => {
+      navigate("/login", { state: { tokenError: true } });
+    }).finally(() => {
+      loading.hideLoading();
+    });
   }, []);
 
-  async function handleSubmit(event: FormEvent) {
+  function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
-    if (newPassword !== newPasswordAgain) {
-      alert.showError("As senhas informadas devem ser iguais.");
-    } else {
-      setLoading(true);
+    if (newPassword !== newPasswordAgain) return alert.showError({ message: "As senhas informadas devem ser iguais." });
+    
+    loading.showLoading();
 
-      const response = await Api.post('user/resetPassword/' + token, { password: newPassword });
+    api.post('auth/resetPassword/' + token, { password: newPassword }).then(response => {
+      navigate("/login", { state: { passwordChanged: true } });
+    }).catch(err => {
+      const result = err.response.data as IRequestError;
 
-      if (response.status >= 400) {
-        alert.showError(response.data.message);
-      } else {
-        navigate("/login", { state: { passwordChanged: true } });
-      }
-
-      setLoading(false);
-    }
+      alert.showError({ error: result });
+    }).finally(() => {
+      loading.hideLoading();
+    });
   }
 
   return (
@@ -77,7 +75,7 @@ function ResetPassword() {
               onChange={event => setNewPasswordAgain(event.target.value)}
             />
 
-            <Button type="submit" buttonClass="btn-primary" isLoading={isLoading} label="Atualizar senha"></Button>
+            <Button type="submit" buttonClass="btn-primary" label="Atualizar senha"></Button>
           </form>
 
           <Options>

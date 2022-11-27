@@ -1,35 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { createContext, useMemo } from 'react';
 import jwt_decode from 'jwt-decode';
+import { createContext, useMemo } from 'react';
 import { IAuthProvider, IContext, IUser, IRequestError, IRequestLogin, AccessTokenDecoded } from './types';
-import { getUserLocalStorage, LoginRequest, RefreshToken, setUserLocalStorage } from './util';
+import { getUserLocalStorage, setUserLocalStorage } from './util';
 import { useNavigate } from 'react-router-dom';
-
-export async function generateAccessToken(): Promise<IRequestError | IRequestLogin> {
-  const user = getUserLocalStorage();
-
-  if (!user?.refresh_token) {
-    return { message: "Refresh token is necessary!" }
-  }
-
-  const response = await RefreshToken(user.refresh_token);
-
-  if ('access_token' in response) {
-    const result = jwt_decode(response.access_token) as AccessTokenDecoded;
-
-    const payload: IUser = {
-      user: result.user,
-      access_token: response.access_token,
-      refresh_token: response.refresh_token
-    }
-
-    setUserLocalStorage(payload);
-  } else {
-    setUserLocalStorage(null);
-  }
-
-  return response;
-}
+import { api } from '../../services/api';
 
 const AuthContext = createContext<IContext>({} as IContext);
 
@@ -43,21 +18,29 @@ const AuthProvider = ({ children }: IAuthProvider) => {
     if (password === "")
       return { message: "É necessário informar a Senha do Usuário!" };
 
-    const response = await LoginRequest(email, password);
-    
-    if ('access_token' in response) {
-      const result = jwt_decode(response.access_token) as AccessTokenDecoded;
+    return new Promise((resolve, reject) => {
+      api.post('auth/sign', { 
+        email, 
+        password 
+      }).then(response => {
+        const result = response.data as IRequestLogin;
+        const jwt_access = jwt_decode(result.access_token) as AccessTokenDecoded;
 
-      const payload: IUser = {
-        user: result.user,
-        access_token: response.access_token,
-        refresh_token: response.refresh_token
-      }
+        const payload: IUser = {
+          user: jwt_access.user,
+          access_token: result.access_token,
+          refresh_token: result.refresh_token
+        }
 
-      setUserLocalStorage(payload);
-    }
+        setUserLocalStorage(payload);
 
-    return response;
+        resolve(result);
+      }).catch(err => {
+        const result = err.response.data as IRequestError;
+
+        reject(result);
+      })
+    });
   }
 
   function logout() {
@@ -70,7 +53,7 @@ const AuthProvider = ({ children }: IAuthProvider) => {
   }
 
   const value = useMemo(
-    () => ({ authenticate, logout, generateAccessToken, getCurrentUser }),
+    () => ({ authenticate, logout, getCurrentUser }),
     []
   );
 

@@ -1,5 +1,3 @@
-import { AxiosError } from "axios";
-import { Api } from "../../services/api";
 import { request } from "../../services/request";
 import { IRequestError, IRequestLogin, IUser } from "./types";
 
@@ -29,22 +27,4 @@ const LoginRequest = async (email: string, password: string): Promise<IRequestEr
   return result as IRequestLogin;
 }
 
-const RefreshToken = async (refresh_token: string): Promise<IRequestError | IRequestLogin> => {
-  try {
-    const request = await Api.post('auth/refresh', { "refreshToken": true }, { headers: { "Authorization": `Bearer ${refresh_token}`}});
-    
-    return request.data;
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      const errorRequest = error.response?.data as IRequestError;
-
-      if (errorRequest) {
-        return errorRequest;
-      }
-    }
-
-    return { message: "Ocorreu um erro de comunicação ao servidor." };
-  }
-}
-
-export { LoginRequest, RefreshToken };
+export { LoginRequest };

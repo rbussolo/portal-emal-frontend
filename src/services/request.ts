@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import { IRequestError } from '../contexts/AuthProvider/types';
-import { Api } from "./api";
+import { api } from "./api";
 
 interface PostRequestProps {
   method: string;
@@ -10,7 +10,7 @@ interface PostRequestProps {
 
 const request = async ({ method, url, data }: PostRequestProps): Promise<IRequestError | any>=> {
   try {
-    const request = await Api.request({
+    const request = await api.request({
       method: method,
       url: url,
       data: data

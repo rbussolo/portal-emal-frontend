@@ -9,6 +9,7 @@ import { Option, Options } from "../../../components/Options";
 import { useAlert } from "../../../contexts/AlertProvider";
 import { Container } from "./styles";
 import { TitlePage } from "../../../components/TitlePage";
+import { IRequestError } from "../../../contexts/AuthProvider/types";
 
 function Login(){
   const [email, setEmail] = useState("");
@@ -25,6 +26,10 @@ function Login(){
       alert.showSuccess("Operação realizada com sucesso!");
       
       window.history.replaceState({}, document.title);
+    } else if (location.state?.tokenError === true) {
+      alert.showError({ message: "Alteração de senha inválida, tempo limite atingido ou alteração já realizada, realiza uma nova alteração se necessário!" });
+
+      window.history.replaceState({}, document.title);
     }
   }, []);
 
@@ -33,15 +38,15 @@ function Login(){
 
     setLoading(true);
 
-    const result = await auth.authenticate(email, password);
-
-    if ('message' in result) {
-      alert.showError(result.message);
-    } else {
+    auth.authenticate(email, password).then(() => {
       navigate("/home");
-    }
+    }).catch(err => {
+      const result = err.response.data as IRequestError;
 
-    setLoading(false);
+      alert.showError({ error: result });
+    }).finally(() => {
+      setLoading(false);
+    });
   }
 
   return (
