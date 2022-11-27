@@ -6,7 +6,6 @@ import { ButtonsFilter } from "../../../../components/Button/styles";
 import { InputForm, SelectForm } from "../../../../components/InputGroup";
 import { TitlePage } from "../../../../components/TitlePage";
 import { useAlert } from "../../../../contexts/AlertProvider";
-import { IRequestError } from "../../../../contexts/AuthProvider/types";
 import { useLoading } from "../../../../contexts/LoadingProvider";
 import { api } from "../../../../services/api";
 import { User, UserType } from "../../../../services/users";
@@ -46,7 +45,7 @@ const UserCreate = function() {
         setCellphone(maskCelular(user.cellphone || ''));
         setType(user.type);
       }).catch(err => {
-        alert.showError({ error: err.response.data as IRequestError});
+        alert.showAxiosError(err);
       }).finally(() => {
         load.hideLoading();
       });
@@ -89,7 +88,7 @@ const UserCreate = function() {
     api.request({ url, method, data: user }).then(response => {
       navigate("/user/list", { state: { success: true }});
     }).catch(err => {
-      alert.showError({ error: err.response.data as IRequestError });
+      alert.showAxiosError(err);
     }).finally(() => {
       load.hideLoading();
     });

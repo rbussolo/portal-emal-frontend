@@ -36,9 +36,7 @@ const AuthProvider = ({ children }: IAuthProvider) => {
 
         resolve(result);
       }).catch(err => {
-        const result = err.response.data as IRequestError;
-
-        reject(result);
+        reject(err);
       })
     });
   }

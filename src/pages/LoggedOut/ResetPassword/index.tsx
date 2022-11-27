@@ -9,7 +9,6 @@ import { useAlert } from "../../../contexts/AlertProvider";
 import { Container } from "./styles";
 import { TitlePage } from "../../../components/TitlePage";
 import { useLoading } from "../../../contexts/LoadingProvider";
-import { IRequestError } from "../../../contexts/AuthProvider/types";
 
 function ResetPassword() {
   const [newPassword, setNewPassword] = useState("");
@@ -40,9 +39,7 @@ function ResetPassword() {
     api.post('auth/resetPassword/' + token, { password: newPassword }).then(response => {
       navigate("/login", { state: { passwordChanged: true } });
     }).catch(err => {
-      const result = err.response.data as IRequestError;
-
-      alert.showError({ error: result });
+      alert.showAxiosError(err);
     }).finally(() => {
       loading.hideLoading();
     });

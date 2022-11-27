@@ -8,7 +8,6 @@ import { IconDelete, IconDisplay, IconUpdate, List, Table, Td } from "../../../.
 
 import { TitlePage } from "../../../../components/TitlePage";
 import { useAlert } from "../../../../contexts/AlertProvider";
-import { IRequestError } from "../../../../contexts/AuthProvider/types";
 import { useLoading } from "../../../../contexts/LoadingProvider";
 import { api } from "../../../../services/api";
 import { FiltersUsers, ListUsers, userTypeEnum } from "../../../../services/users";
@@ -32,8 +31,8 @@ const UserList = function () {
 
     api.get("/users", { params: filters }).then(response => {
       setData(response.data as ListUsers);
-    }).catch(err => {
-      alert.showError({ error: err.response.data as IRequestError });
+    }).catch((err) => {
+      alert.showAxiosError(err);
     }).finally(() => {
       load.hideLoading();
     });
@@ -76,7 +75,7 @@ const UserList = function () {
 
         alert.showSuccess("Registro removido com sucesso!");
       }).catch(err => {
-        alert.showError({ error: err.response.data as IRequestError });
+        alert.showAxiosError(err);
       }).finally(() => {
         load.hideLoading();
       });

@@ -9,17 +9,17 @@ import { Option, Options } from "../../../components/Options";
 import { useAlert } from "../../../contexts/AlertProvider";
 import { Container } from "./styles";
 import { TitlePage } from "../../../components/TitlePage";
-import { IRequestError } from "../../../contexts/AuthProvider/types";
+import { useLoading } from "../../../contexts/LoadingProvider";
 
 function Login(){
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setLoading] = useState(false);
-
+  
   const auth = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const alert = useAlert();
+  const load = useLoading();
 
   useEffect(() => {
     if (location.state?.passwordChanged === true) {
@@ -36,16 +36,14 @@ function Login(){
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
-    setLoading(true);
+    load.showLoading();
 
     auth.authenticate(email, password).then(() => {
       navigate("/home");
     }).catch(err => {
-      const result = err.response.data as IRequestError;
-
-      alert.showError({ error: result });
+      alert.showAxiosError(err);
     }).finally(() => {
-      setLoading(false);
+      load.hideLoading();
     });
   }
 
@@ -76,7 +74,7 @@ function Login(){
               onChange={event => setPassword(event.target.value)}
             />
 
-            <Button type="submit" buttonClass="btn-primary" isLoading={isLoading} label="Entrar"></Button>
+            <Button type="submit" buttonClass="btn-primary" label="Entrar"></Button>
           </form>
 
           <Options>

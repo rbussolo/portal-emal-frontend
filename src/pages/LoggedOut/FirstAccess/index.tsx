@@ -9,18 +9,18 @@ import { api } from "../../../services/api";
 import { useAlert } from "../../../contexts/AlertProvider";
 import { ButtonLikeLink, Container } from "./styles";
 import { TitlePage } from "../../../components/TitlePage";
-import { IRequestError } from "../../../contexts/AuthProvider/types";
+import { useLoading } from "../../../contexts/LoadingProvider";
 
 function FirstAccess() {
   const [cnpj, setCnpj] = useState("");
   const [email, setEmail] = useState("");
-  const [isLoading, setLoading] = useState(false);
   const [isWaiting, setWaiting] = useState(false);
   const [seconds, setSeconds] = useState(0);
 
   const timer = useTimer(); 
   const TIMER_TAG = "FIRST_ACCESS";
   const alert = useAlert();
+  const load = useLoading();
 
   useEffect(() => {
     const dataStorage = timer.hasTimer(TIMER_TAG);
@@ -43,7 +43,7 @@ function FirstAccess() {
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    setLoading(true);
+    load.showLoading();
 
     api.post('auth/migrate', { cpf_cnpj: cnpj, email }).then(() => {
       alert.showSuccess("Foi enviado um e-mail com instruções para continuar o cadastro, favor verifique.");
@@ -57,23 +57,23 @@ function FirstAccess() {
         stop: () => { setWaiting(false); }
       });
     }).catch(err => {
-      alert.showError({ error: err.response.data as IRequestError });
+      alert.showAxiosError(err);
     }).finally(() => {
-      setLoading(false);
+      load.hideLoading();
     });
   }
 
   async function handleForgetEmail() {
     if (!cnpj) return alert.showError({ message: "É necessário informar o CNPJ da empresa!" });
 
-    setLoading(true);
+    load.showLoading();
 
     api.post('auth/forgotEmail', { cpf_cnpj: cnpj }).then(response => {
       alert.showInfo("O e-mail cadastrado para este CNPJ é: <br /><b>" + response.data.email + "</b>");
     }).catch(err => {
-      alert.showError({ error: err.response.data as IRequestError });
+      alert.showAxiosError(err);
     }).finally(() => {
-      setLoading(false);
+      load.hideLoading();
     });
   }
 
@@ -102,7 +102,7 @@ function FirstAccess() {
               <input id="email" name="email" type="email" placeholder="E-mail de contato" value={email} onChange={event => setEmail(event.target.value)} className="form-control" />
             </div>
 
-            <Button type="submit" buttonClass="btn-primary" isLoading={isLoading || isWaiting} label={!isWaiting ? "Solicitar Acesso" : "Aguarde um momento"}></Button>
+            <Button type="submit" buttonClass="btn-primary" isLoading={isWaiting} label={!isWaiting ? "Solicitar Acesso" : "Aguarde um momento"}></Button>
             { 
               isWaiting ? (
                 <div className="waiting">

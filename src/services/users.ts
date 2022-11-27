@@ -1,5 +1,3 @@
-import { IRequestError, IRequestSuccess } from "../contexts/AuthProvider/types";
-import { api } from "./api";
 
 export interface FiltersUsers {
   page?: number;

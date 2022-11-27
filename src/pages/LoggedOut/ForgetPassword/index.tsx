@@ -9,18 +9,18 @@ import { api } from "../../../services/api";
 import { useAlert } from "../../../contexts/AlertProvider";
 import { TitlePage } from "../../../components/TitlePage";
 import { Container } from "./styles";
-import { IRequestError } from "../../../contexts/AuthProvider/types";
+import { useLoading } from "../../../contexts/LoadingProvider";
 
 function ForgetPassword() {
   const [cpfCnpj, setCpfCnpj] = useState("");
   const [email, setEmail] = useState("");
-  const [isLoading, setLoading] = useState(false);
   const [isWaiting, setWaiting] = useState(false);
   const [seconds, setSeconds] = useState(0);
 
   const timer = useTimer(); 
   const TIMER_TAG = "FORGOT_PASSWORD";
   const alert = useAlert();
+  const load = useLoading();
 
   useEffect(() => {
     const dataStorage = timer.hasTimer(TIMER_TAG);
@@ -43,7 +43,7 @@ function ForgetPassword() {
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    setLoading(true);
+    load.showLoading();
 
     api.post('auth/forgotPassword', { cpf_cnpj: cpfCnpj, email }).then(response => {
       alert.showSuccess("Foi enviado um e-mail com instruções para resetar sua senha, favor verifique.");
@@ -57,11 +57,9 @@ function ForgetPassword() {
         stop: () => { setWaiting(false); }
       });
     }).catch(err => {
-      const result = err.response.data as IRequestError;
-
-      alert.showError({ error: result });
+      alert.showAxiosError(err);
     }).finally(() => {
-      setLoading(false);
+      load.hideLoading();
     });
   }
 
@@ -92,7 +90,7 @@ function ForgetPassword() {
               onChange={event => setEmail(event.target.value)}
             />
 
-            <Button type="submit" buttonClass="btn-primary" isLoading={isLoading || isWaiting} label={!isWaiting ? "Solicitar nova senha" : "Aguarde um momento"}></Button>
+            <Button type="submit" buttonClass="btn-primary" isLoading={isWaiting} label={!isWaiting ? "Solicitar nova senha" : "Aguarde um momento"}></Button>
             { 
               isWaiting ? (
                 <div className="waiting">
