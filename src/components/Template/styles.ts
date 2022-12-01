@@ -4,7 +4,9 @@ export const Container = styled.div`
   width: 100%;
   min-height: calc(100vh - 8rem);
 
-  background-color: #f5f6f6;
+  background-color: var(--background);
 
   padding-bottom: 2rem;
+
+  border-top: 1px solid var(--border-color);
 `

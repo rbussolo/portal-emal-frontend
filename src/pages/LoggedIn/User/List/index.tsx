@@ -9,10 +9,10 @@ import { IconDelete, IconDisplay, IconUpdate, List, Table, Td } from "../../../.
 import { TitlePage } from "../../../../components/TitlePage";
 import { useAlert } from "../../../../contexts/AlertProvider";
 import { useLoading } from "../../../../contexts/LoadingProvider";
+import { ContainerFiltros, Filtros } from "../../../../global.styles";
 import { api } from "../../../../services/api";
 import { FiltersUsers, ListUsers, userTypeEnum } from "../../../../services/users";
 import { maskCpfCnpj } from "../../../../utils/mask";
-import { ContainerFiltros, Filtros } from "./styles";
 
 const UserList = function () {
   const navigate = useNavigate();

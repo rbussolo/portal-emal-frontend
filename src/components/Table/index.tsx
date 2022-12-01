@@ -1,34 +1,52 @@
+import React from "react";
 import { Link } from "react-router-dom";
-import { ContainerPagination, ContainerTable } from "./styles";
+import { ContainerNotFound, ContainerPagination, ContainerTable } from "./styles";
 
 interface ListProps {
   count?: number;
   countPerPage?: number;
   currentPage?: number;
+  isPopup?: boolean;
+  showResults?: boolean;
   onChangePage: (page: number) => void;
   children: JSX.Element | JSX.Element[];
 }
 
-function List({ count = 0, countPerPage = 50, currentPage = 1, onChangePage, children }: ListProps) {
+function List({ count = 0, countPerPage = 50, currentPage = 1, showResults = true, isPopup = false, onChangePage, children }: ListProps) {
+  if (!showResults) {
+    return null;
+  }
+
+  if (count === 0) {
+    return (
+      <ContainerNotFound className={`${isPopup ? 'isPopup' : ''}`}>
+        <div>
+          Nenhum registro foi encontrado!
+        </div>
+      </ContainerNotFound>
+    );
+  }
+
   const lastPage = countPerPage > 0 ? Math.ceil(count / countPerPage) : 1;
- 
+  const countPages = isPopup ? 1 : 2;
+  
   let pages: number[] = [];
   
-  if (currentPage < 3 || count <= 5 * countPerPage) {
+  if (!isPopup && (currentPage < 3 || count <= 5 * countPerPage)) {
     pages = [1, 2, 3, 4, 5];
+  } else if (isPopup && (currentPage < 2 || count <= 3 * countPerPage)) {
+    pages = [1, 2, 3];
   } else {
-    const initial = currentPage + 2 > lastPage ? currentPage - 2 - (currentPage + 2 - lastPage) : currentPage - 2;
-    const final = currentPage + 2 > lastPage ? lastPage : currentPage + 2;
+    const initial = currentPage + countPages > lastPage ? currentPage - countPages - (currentPage + countPages - lastPage) : currentPage - countPages;
+    const final = currentPage + countPages > lastPage ? lastPage : currentPage + countPages;
 
     for (let i = initial; i <= final; i++) {
       pages.push(i);
     }
-
-    console.log(pages);
   }
 
   return (
-    <ContainerTable>
+    <ContainerTable className={`${isPopup ? 'isPopup' : ''}`}>
       <div>
         <ContainerPagination>
           <div>Total de registros: {count}</div>
@@ -47,7 +65,7 @@ function List({ count = 0, countPerPage = 50, currentPage = 1, onChangePage, chi
           </nav>
         </ContainerPagination>
       </div>
-      <div>
+      <div className="table-responsive">
         { children }
       </div>
     </ContainerTable>
@@ -64,6 +82,19 @@ function Table({ children }: TableProps) {
       { children }
     </table>
   );
+}
+
+interface TrProps extends React.HTMLAttributes<HTMLTableRowElement> {
+  isSelectable?: boolean;
+  children?: JSX.Element | JSX.Element[] | any;
+}
+
+function Tr({ isSelectable, children, ...rest }: TrProps) {
+  return (
+    <tr className={`${isSelectable ? 'selectable' : ''}`} { ...rest }>
+      { children }
+    </tr>
+  )
 }
 
 interface TdProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
@@ -127,4 +158,4 @@ function IconDelete({ to, state, onclick }: IconProps) {
 }
 
 
-export { List, Table, Td, IconDisplay, IconUpdate, IconDelete }
+export { List, Table, Td, Tr, IconDisplay, IconUpdate, IconDelete }

@@ -50,4 +50,8 @@ function maskCelular(celular: string): string { // (99) 99999-9999
   return celular;
 }
 
-export { maskCnpj, maskCpf, maskCpfCnpj, maskCelular };
+function removeMask(text: string) {
+  return text.replace(/\D/g, "");
+}
+
+export { maskCnpj, maskCpf, maskCpfCnpj, maskCelular, removeMask };

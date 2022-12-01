@@ -16,6 +16,9 @@ export const Container = styled.div`
     padding: 1.5rem;
     background-color: #fff;
 
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+
     form{
       .btn {
         width: 100%;

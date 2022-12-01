@@ -1,3 +1,11 @@
+:root {
+  --background: #f5f6f6;
+  --background-container: #FFF;
+
+  --border-radius: 5px;
+  --border-color: #bdc3c7;
+}
+
 * {
   margin: 0px;
   padding: 0px;
@@ -24,7 +32,23 @@ h1, h2, h3, h4 {
 }
 
 .navbar {
-  height: 5rem;
+  min-height: 5rem;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+#navbarHeader {
+  justify-content: flex-end;
+}
+
+#navbarHeader a, #navbarHeader a:focus {
+  color: #464f57;
+}
+
+#navbarHeader a:hover, #navbarHeader a:focus-visible {
+  background-color: #e4e4e4;
+  color: #005ca9;
+  outline: 1px solid;
 }
 
 .column-identifier {
@@ -71,6 +95,50 @@ tbody .column-action div {
 
 .icon-delete:hover {
   color: #e74c3c;
+}
+
+.input-group > .form-control.width-auto {
+  flex-grow: 0;
+  width: auto;
+}
+
+button.input-group-text:hover {
+  filter: brightness(80%);
+}
+
+.react-modal-overlay {
+  background: rgba(0, 0, 0, 0.5);
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.react-modal-content {
+  background: var(--background-container);
+  padding: 2rem;
+  position: relative;
+  border-radius: 0.25rem;
+}
+
+.react-modal-close {
+  position: absolute;
+  right: 1.5rem;
+  top: 1.5rem;
+  border: 0;
+  background: transparent;
+
+  transition: filter 0.2s;
+}
+
+.react-modal-close:hover {
+  filter: brightness(0.8);
 }
 
 @media (min-width: 576px) {

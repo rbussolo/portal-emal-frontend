@@ -39,13 +39,13 @@ api.interceptors.response.use(
   (response) => {
     return response;
   },
-  async (error: AxiosError) => {
+  (error: AxiosError) => {
     if (error.response?.status !== 401) {
       return Promise.reject(error);
     }
 
     const errorResponse = error.response.data as IRequestError;
-
+    
     // Vamos trabalhar apenas com erros referente ao access token
     if (errorResponse.code === 'access_token' && errorResponse.message === 'TokenExpiredError') {
       const originalConfig = error.config!;
