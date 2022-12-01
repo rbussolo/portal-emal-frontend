@@ -1,6 +1,6 @@
 
 export interface Estoque {
-  ESTQCOD?: number;
+  ESTQCOD?: string;
   ESTQNOMECOMP?: string;
   ESTQNCM?: string;
 }
@@ -15,6 +15,12 @@ export interface ListEstoques {
 export interface FiltersEstoques {
   page?: number;
   amount?: number;
-  cod?: number;
+  cod?: string;
   name?: string;
+}
+
+export const EmptyEstoque: Estoque = {
+  ESTQCOD: "", 
+  ESTQNCM: "", 
+  ESTQNOMECOMP: ""
 }

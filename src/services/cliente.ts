@@ -20,3 +20,10 @@ export interface FiltersClientes {
   name?: string;
   cpfCnpj?: string;
 }
+
+export const EmptyCliente: Cliente = {
+  CLICOD: 0,
+  CLINOME: "",
+  CLICNPJCPF: "",
+  CLIEMAIL: ""
+}

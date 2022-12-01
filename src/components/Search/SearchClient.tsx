@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useAlert } from "../../contexts/AlertProvider";
 import { PopUpSearchClient } from "../../pages/LoggedIn/Client/PopupSearch";
 import { api } from "../../services/api";
-import { Cliente } from "../../services/cliente";
+import { Cliente, EmptyCliente } from "../../services/cliente";
 import { maskCpfCnpj, removeMask } from "../../utils/mask";
 
 interface SearchClientProps {
@@ -20,7 +20,7 @@ const SearchClient = ({ client, onClientChange }: SearchClientProps) => {
 
   function onBlurClient() {
     if (!client.CLICNPJCPF) {
-      onClientChange({ CLICOD: 0, CLICNPJCPF: "", CLINOME: "" });
+      onClientChange(EmptyCliente);
     } else if (client.CLICNPJCPF !== lastClientCpfCnpj) {
       api.get("/clients/byCpfCnpj/" + removeMask(client.CLICNPJCPF)).then(response => {
         onClientChange(response.data);
@@ -62,7 +62,7 @@ const SearchClient = ({ client, onClientChange }: SearchClientProps) => {
         </div>
       </div>
 
-      <PopUpSearchClient isOpen={isOpen} onSelectedClient={onSelectedClient} onRequestClose={() => setOpen(false)} />
+      <PopUpSearchClient isOpen={isOpen} onSelected={onSelectedClient} onRequestClose={() => setOpen(false)} />
     </>
   )
 }

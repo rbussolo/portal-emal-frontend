@@ -5,6 +5,7 @@ import { Button } from "../../../../components/Button";
 import { ButtonsFilter } from "../../../../components/Button/styles";
 import { InputFilters, SelectFilters } from "../../../../components/InputGroup";
 import { SearchClient } from "../../../../components/Search/SearchClient";
+import { SearchEstoque } from "../../../../components/Search/SearchProduct";
 import { IconDelete, IconDisplay, IconUpdate, List, Table, Td } from "../../../../components/Table";
 
 import { TitlePage } from "../../../../components/TitlePage";
@@ -12,7 +13,8 @@ import { useAlert } from "../../../../contexts/AlertProvider";
 import { useLoading } from "../../../../contexts/LoadingProvider";
 import { ContainerFiltros, Filtros } from "../../../../global.styles";
 import { api } from "../../../../services/api";
-import { Cliente } from "../../../../services/cliente";
+import { Cliente, EmptyCliente } from "../../../../services/cliente";
+import { EmptyEstoque, Estoque } from "../../../../services/estoque";
 import { FiltersUsers, ListUsers, userTypeEnum } from "../../../../services/users";
 import { maskCpfCnpj } from "../../../../utils/mask";
 
@@ -27,7 +29,8 @@ const OrderList = function () {
   const [initialDate, setInitialDate] = useState("");
   const [finalDate, setFinalDate] = useState("");
 
-  const [client, setClient] = useState<Cliente>({ CLICOD: 0, CLICNPJCPF: "", CLINOME: "" });
+  const [client, setClient] = useState<Cliente>(EmptyCliente);
+  const [estoque, setEstoque] = useState<Estoque>(EmptyEstoque);
   
   const [email, setEmail] = useState("");
   const [type, setType] = useState("");
@@ -119,12 +122,7 @@ const OrderList = function () {
 
           <SearchClient client={client} onClientChange={(client) => setClient(client)} />
 
-          <InputFilters label="Produto" name="product"
-            type="text"
-            placeholder="Produto"
-            value={email}
-            onChange={event => setEmail(event.target.value)}
-          />
+          <SearchEstoque estoque={estoque} onEstoqueChange={(estoque) => setEstoque(estoque)} />
 
           <InputFilters label="Nº Pedido" name="orderNumber"
             type="text"

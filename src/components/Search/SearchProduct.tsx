@@ -1,34 +1,44 @@
 import { useState } from 'react';
+import styled from 'styled-components';
 import { useAlert } from '../../contexts/AlertProvider';
-import { PopUpSearchClient } from '../../pages/LoggedIn/Client/PopupSearch';
+import { PopUpSearchEstoque } from '../../pages/LoggedIn/Estoque/PopupSearch';
 import { api } from '../../services/api';
-import { Estoque } from "../../services/estoque";
+import { EmptyEstoque, Estoque } from "../../services/estoque";
+import { maskNumerica } from '../../utils/mask';
 
 interface SearchEstoqueProps {
   estoque: Estoque;
   onEstoqueChange: (estoque: Estoque) => void;
 }
 
+interface Estoques {
+  estoques: Estoque[];
+  count: number;
+  countPerPage: number;
+}
+
 const SearchEstoque = ({ estoque, onEstoqueChange }: SearchEstoqueProps) => {
-  let lastEstoqueCodigo = 0;
+  let lastEstoqueCodigo = "";
   const [isOpen, setOpen] = useState(false);
   const alert = useAlert();
 
   function onBlurEstoque() {
     if (!estoque.ESTQCOD) {
-      onEstoqueChange({ ESTQCOD: 0, ESTQNCM: "", ESTQNOMECOMP: "" });
+      onEstoqueChange(EmptyEstoque);
     } else if (estoque.ESTQCOD !== lastEstoqueCodigo) {
-      api.get("/inventory/" + estoque.ESTQCOD).then(response => {
-        onEstoqueChange(response.data);
+      api.get("/estoques", { params: { cod: estoque.ESTQCOD }}).then(response => {
+        const estoques = response.data as Estoques;
+
+        onEstoqueChange(estoques.estoques[0]);
       }).catch(err => {
         alert.showAxiosError(err);
       });
     }
 
-    lastEstoqueCodigo = estoque.ESTQCOD || 0;
+    lastEstoqueCodigo = estoque.ESTQCOD || "";
   }
 
-  function onSelectedEstoque() {
+  function onSelectedEstoque(estoque: Estoque) {
     onEstoqueChange(estoque);
     setOpen(false);
   }
@@ -39,12 +49,12 @@ const SearchEstoque = ({ estoque, onEstoqueChange }: SearchEstoqueProps) => {
         <label className="col-sm-3 col-form-label">Produto:</label>
         <div className="col-sm-9">
           <div className="input-group">
-            <input
-              type="number"
+            <InputCodigo
+              type="text"
               className="form-control"
-              placeholder="CPF/CNPJ do Cliente"
+              placeholder="Código do Produto"
               value={estoque.ESTQCOD}
-              onChange={e => onEstoqueChange({ ...estoque, ESTQCOD: parseInt(e.target.value) })}
+              onChange={e => onEstoqueChange({ ...estoque, ESTQCOD: maskNumerica(e.target.value) })}
               onBlur={onBlurEstoque}
             />
             <button className="input-group-text" onClick={() => setOpen(true)}><i className="bi bi-search"></i></button>
@@ -58,9 +68,13 @@ const SearchEstoque = ({ estoque, onEstoqueChange }: SearchEstoqueProps) => {
         </div>
       </div>
 
-      <PopUpSearchClient isOpen={isOpen} onSelectedClient={onSelectedEstoque} onRequestClose={() => setOpen(false)} />
+      <PopUpSearchEstoque isOpen={isOpen} onSelected={onSelectedEstoque} onRequestClose={() => setOpen(false)} />
     </>
   );
 }
+
+const InputCodigo = styled.input`
+  max-width: 180px;
+`;
 
 export { SearchEstoque }

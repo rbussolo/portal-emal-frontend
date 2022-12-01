@@ -14,11 +14,11 @@ import { useAlert } from '../../../../contexts/AlertProvider';
 
 interface PopUpSearchClientProps {
   isOpen: boolean;
-  onSelectedClient: (client: Cliente) => void;
+  onSelected: (client: Cliente) => void;
   onRequestClose: () => void;
 }
 
-export function PopUpSearchClient({ isOpen, onSelectedClient, onRequestClose }: PopUpSearchClientProps) {
+export function PopUpSearchClient({ isOpen, onSelected, onRequestClose }: PopUpSearchClientProps) {
   const [name, setName] = useState("");
   const [cpfCnpj, setCpfCnpj] = useState("");
 
@@ -61,10 +61,10 @@ export function PopUpSearchClient({ isOpen, onSelectedClient, onRequestClose }: 
     fetchData(newFilters);
   }
 
-  function handleClientSelected(index: number) {
+  function handleSelected(index: number) {
     const client = data.clients![index];
 
-    onSelectedClient(client);
+    onSelected(client);
   }
 
   return (
@@ -97,7 +97,7 @@ export function PopUpSearchClient({ isOpen, onSelectedClient, onRequestClose }: 
             <tbody>
               {data.clients?.map((client, index) => {
                 return (
-                  <Tr key={client.CLICOD} isSelectable={true} onClick={() => handleClientSelected(index)}>
+                  <Tr key={client.CLICOD} isSelectable={true} onClick={() => handleSelected(index)}>
                     <Td isIdentifier>{client.CLICOD}</Td>
                     <Td>{client.CLICNPJCPF}</Td>
                     <Td>{client.CLINOME}</Td>
