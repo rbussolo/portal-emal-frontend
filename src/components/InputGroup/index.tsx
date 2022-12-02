@@ -35,6 +35,38 @@ export function InputFilters({ name, label, inputClass, groupClass, ...rest }: I
   )
 }
 
+interface InputFiltersGroupDatesProps {
+  initialDate: string;
+  onInitialDateChange: (initialDate: string) => void;
+  finalDate: string;
+  onFinalDateChange: (finalDate: string) => void;
+}
+
+export function InputFiltersGroupDates({ initialDate, onInitialDateChange, finalDate, onFinalDateChange }: InputFiltersGroupDatesProps){ 
+  return (
+    <div className='mb-3 row'>
+      <label htmlFor="date" className="col-sm-3 col-form-label">Período:</label>
+      <div className="col-sm-9">
+        <div className="input-group">
+          <input
+            type="date"
+            className="form-control width-auto"
+            value={initialDate}
+            onChange={e => onInitialDateChange(e.target.value)}
+          />
+          <span className="input-group-text">a</span>
+          <input
+            type="date"
+            className="form-control width-auto"
+            value={finalDate}
+            onChange={e => onFinalDateChange(e.target.value)}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function SelectFilters({ name, label, groupClass, inputClass, children, ...rest }: SelectGroupProps) {
   return (
     <div className={`mb-3 row ${groupClass ? groupClass : ''}`}>

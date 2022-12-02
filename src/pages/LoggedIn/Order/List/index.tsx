@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../../../components/Button";
 import { ButtonsFilter } from "../../../../components/Button/styles";
-import { InputFilters, SelectFilters } from "../../../../components/InputGroup";
+import { InputFilters, InputFiltersGroupDates, SelectFilters } from "../../../../components/InputGroup";
 import { SearchClient } from "../../../../components/Search/SearchClient";
 import { SearchEstoque } from "../../../../components/Search/SearchProduct";
 import { IconDelete, IconDisplay, IconUpdate, List, Table, Td } from "../../../../components/Table";
@@ -99,30 +99,22 @@ const OrderList = function () {
 
           <hr />
 
-          <div className='mb-3 row'>
-            <label htmlFor="date" className="col-sm-3 col-form-label">Período:</label>
-            <div className="col-sm-9">
-              <div className="input-group">
-                <input 
-                  type="date" 
-                  className="form-control width-auto" 
-                  value={initialDate}
-                  onChange={e => setInitialDate(e.target.value)}
-                />
-                <span className="input-group-text">a</span>
-                <input 
-                  type="date" 
-                  className="form-control width-auto" 
-                  value={finalDate}
-                  onChange={e => setFinalDate(e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
+          <InputFiltersGroupDates 
+            initialDate={initialDate} 
+            onInitialDateChange={d => setInitialDate(d)} 
+            finalDate={finalDate} 
+            onFinalDateChange={d => setFinalDate(d)} 
+          />
 
-          <SearchClient client={client} onClientChange={(client) => setClient(client)} />
+          <SearchClient 
+            client={client} 
+            onClientChange={(client) => setClient(client)} 
+          />
 
-          <SearchEstoque estoque={estoque} onEstoqueChange={(estoque) => setEstoque(estoque)} />
+          <SearchEstoque 
+            estoque={estoque} 
+            onEstoqueChange={(estoque) => setEstoque(estoque)} 
+          />
 
           <InputFilters label="Nº Pedido" name="orderNumber"
             type="text"

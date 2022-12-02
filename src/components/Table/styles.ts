@@ -3,7 +3,7 @@ import styled from "styled-components";
 const ContainerTable = styled.div`
   padding: 1.5rem;
   width: 100%;
-  max-width: calc(100% - 3rem);
+  max-width: calc(100% - 1.5rem);
 
   margin-left: auto;
   margin-right: auto;
