@@ -141,6 +141,10 @@ button.input-group-text:hover {
   filter: brightness(0.8);
 }
 
+.form-check-input, .form-check-label {
+  cursor: pointer;
+}
+
 @media (min-width: 576px) {
   .col-form-label {
     text-align: right;

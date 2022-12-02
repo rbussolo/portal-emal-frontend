@@ -15,6 +15,14 @@ interface SelectGroupProps extends SelectHTMLAttributes<HTMLSelectElement> {
   children: JSX.Element | JSX.Element[];
 }
 
+interface CheckBoxProps extends InputHTMLAttributes<HTMLInputElement> {
+  name: string;
+  label: string;
+  inline?: boolean;
+  inputClass?: string;
+  groupClass?: string;
+}
+
 export function InputGroup({ name, label, inputClass, groupClass, ...rest }: InputGroupProps) {
   return (
     <div className={groupClass ? groupClass : ''}>
@@ -100,6 +108,15 @@ export function SelectForm({ name, label, groupClass, inputClass, children, ...r
           {children}
         </select>
       </div>
+    </div>
+  )
+}
+
+export function CheckFilters({ name, label, inline, ...rest }: CheckBoxProps) {
+  return (
+    <div className={`form-check ${inline ? 'form-check-inline' : ''}`}>
+      <input className="form-check-input" type="checkbox" id={name} { ...rest }/>
+      <label className="form-check-label" htmlFor={name}>{label}</label>
     </div>
   )
 }
