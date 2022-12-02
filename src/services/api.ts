@@ -68,7 +68,7 @@ api.interceptors.response.use(
           }
 
           setUserLocalStorage(payload);
-
+          
           failedRequestsQueue.forEach(request => request.onSuccess(result.access_token));
           failedRequestsQueue = [];
         }).catch(err => {
@@ -82,7 +82,10 @@ api.interceptors.response.use(
       return new Promise((resolve, reject) => {
         failedRequestsQueue.push({
           onSuccess: (token: string) => {
-            originalConfig.headers!['Authorization'] = `Bearer ${token}`;
+            originalConfig.headers = {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
 
             resolve(api(originalConfig));
           },
