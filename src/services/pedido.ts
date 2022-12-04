@@ -1,7 +1,7 @@
 
 export interface Pedido {
   PEDNUM: number;
-  PEDDATA: Date;
+  PEDDATA: string;
   CLICOD: number;
   CLICNPJCPF: string;
   CLINOME: string;
@@ -19,8 +19,31 @@ export interface Pedido {
   IPEDUNIT: number;
   IPEDQUANTDESP: number;
   IPEDQUANTCANC: number;
+  IPEDQUANTSALDO: number;
   PEDPESOTOT: number;
   PEDTOTALBRUTO: number;
+}
+
+export interface PedidoGroup {
+  IPEDQUANT: number;
+  IPEDPESOTOT: number;
+  IPEDUNIT: number;
+  IPEDQUANTDESP: number;
+  IPEDQUANTCANC: number;
+  IPEDQUANTSALDO: number;
+  PEDPESOTOT: number;
+  PEDTOTALBRUTO: number;
+}
+
+export const EmptyPedidoGroup: PedidoGroup = {
+  IPEDQUANT: 0,
+  IPEDPESOTOT: 0,
+  IPEDUNIT: 0,
+  IPEDQUANTDESP: 0,
+  IPEDQUANTCANC: 0,
+  IPEDQUANTSALDO: 0,
+  PEDPESOTOT: 0,
+  PEDTOTALBRUTO: 0
 }
 
 export interface ListPedidos {
@@ -39,6 +62,11 @@ export interface FiltersPedidos {
   pedEmp?: number;
   pedFil?: number;
   estqCod?: number;
+  pedNobres?: boolean;
+  pedCuiaba?: boolean;
+  pedAcucar?: boolean;
+  pedItaipu?: boolean;
+  pedCamil?: boolean;
 }
 
 export const pedidoSituacaoEnum = ["Aprovado", "Cancelado", "Pendente", "Custo OK", "Reprovado"];

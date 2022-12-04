@@ -57,6 +57,16 @@ h1, h2, h3, h4 {
 
 .column-action {
   text-align: center;
+  min-width: 100px;
+}
+
+.column-numeric {
+  text-align: right;
+  min-width: 100px;
+}
+
+table thead tr td {
+  white-space: nowrap;
 }
 
 tbody .column-action {

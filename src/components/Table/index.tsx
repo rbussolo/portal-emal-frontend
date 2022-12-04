@@ -73,7 +73,7 @@ function List({ count = 0, countPerPage = 50, currentPage = 1, showResults = tru
 }
 
 interface TableProps {
-  children: JSX.Element | JSX.Element[];
+  children: JSX.Element | JSX.Element[] | null | undefined;
 }
 
 function Table({ children }: TableProps) {
@@ -100,12 +100,14 @@ function Tr({ isSelectable, children, ...rest }: TrProps) {
 interface TdProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
   isIdentifier?: boolean;
   isAction?: boolean;
+  isNumeric?: boolean;
+  extraClass?: string;
   children?: JSX.Element | JSX.Element[] | any;
 }
 
-function Td({ isIdentifier = false, isAction = false, children, ...rest }: TdProps) {
+function Td({ isIdentifier = false, isAction = false, isNumeric = false, extraClass, children, ...rest }: TdProps) {
   return (
-    <td className={`${isIdentifier ? 'column-identifier' : ''} ${isAction ? 'column-action' : ''}`} {...rest} >
+    <td className={`${isIdentifier ? 'column-identifier ' : ''}${isAction ? 'column-action ' : ''}${isNumeric ? 'column-numeric ' : ''}${extraClass ? extraClass : ''}`} {...rest} >
       { children }
     </td>
   );

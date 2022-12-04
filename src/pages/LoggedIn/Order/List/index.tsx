@@ -15,8 +15,8 @@ import { ContainerFiltros, Filtros } from "../../../../global.styles";
 import { api } from "../../../../services/api";
 import { Cliente, EmptyCliente } from "../../../../services/cliente";
 import { EmptyEstoque, Estoque } from "../../../../services/estoque";
-import { FiltersPedidos, ListPedidos, pedidoSituacaoEnum } from "../../../../services/pedido";
-import { maskNumerica } from "../../../../utils/mask";
+import { EmptyPedidoGroup, FiltersPedidos, ListPedidos, PedidoGroup, pedidoSituacaoEnum } from "../../../../services/pedido";
+import { formatDateToString, formatNumberToAmount, formatNumberToReal, maskNumerica } from "../../../../utils/mask";
 
 const OrderList = function () {
   const navigate = useNavigate();
@@ -25,13 +25,16 @@ const OrderList = function () {
 
   const [filters, setFilters] = useState<FiltersPedidos>({});
   const [data, setData] = useState<ListPedidos>({ count: 0, countPerPage: 0, pedidos: [] });
+  const [dataGroup, setDataGroup] = useState<PedidoGroup>({ ...EmptyPedidoGroup });
+  const [showFooter, setShowFooter] = useState(false);
 
   const [initialDate, setInitialDate] = useState("");
   const [finalDate, setFinalDate] = useState("");
-  const [client, setClient] = useState<Cliente>(EmptyCliente);
-  const [estoque, setEstoque] = useState<Estoque>(EmptyEstoque);
+  const [client, setClient] = useState<Cliente>({ ...EmptyCliente });
+  const [estoque, setEstoque] = useState<Estoque>({ ...EmptyEstoque });
   const [orderNumber, setOrderNumber] = useState("");
   const [checkNobres, setCheckNobres] = useState(false);
+  const [checkCuiaba, setCheckCuiaba] = useState(false);
   const [checkAcucar, setCheckAcucar] = useState(false);
   const [checkItaipu, setCheckItaipu] = useState(false);
   const [checkCamil, setCheckCamil] = useState(false);
@@ -54,15 +57,51 @@ const OrderList = function () {
     fetchData(filters);
   }, []);
 
+  useEffect(() => {
+    const dataGroup = { ...EmptyPedidoGroup };
+
+    console.log(dataGroup);
+
+    if (data.pedidos) {
+      for (let i = 0; i < data.pedidos!.length; i++) {
+        dataGroup.IPEDQUANT += data.pedidos[i].IPEDQUANT;
+        dataGroup.IPEDPESOTOT += data.pedidos[i].IPEDPESOTOT;
+        dataGroup.IPEDUNIT += data.pedidos[i].IPEDUNIT;
+        dataGroup.IPEDQUANTDESP += data.pedidos[i].IPEDQUANTDESP;
+        dataGroup.IPEDQUANTCANC += data.pedidos[i].IPEDQUANTCANC;
+        dataGroup.IPEDQUANTSALDO += data.pedidos[i].IPEDQUANTSALDO;
+        dataGroup.PEDPESOTOT += data.pedidos[i].PEDPESOTOT;
+        dataGroup.PEDTOTALBRUTO += data.pedidos[i].PEDTOTALBRUTO;
+      }
+    }
+
+    if (data.pedidos && data.pedidos.length > 0) {
+      setShowFooter(true);
+    } else {
+      setShowFooter(false);
+    }
+
+    console.log(dataGroup);
+
+    setDataGroup(dataGroup);
+  }, [data]);
+
   async function handleSearch() {
     const newFilters: FiltersPedidos = { 
       page: 1, 
-      pedNum: parseInt(orderNumber),
+      pedNum: orderNumber.length > 0 ? parseInt(orderNumber) : 0,
       pedCli: client.CLICOD,
       pedDataInicial: initialDate,
       pedDataFinal: finalDate,
-      estqCod: estoque.ESTQCOD ? parseInt(estoque.ESTQCOD) : 0
+      estqCod: estoque.ESTQCOD ? parseInt(estoque.ESTQCOD) : 0,
+      pedNobres: checkNobres,
+      pedCuiaba: checkCuiaba,
+      pedAcucar: checkAcucar,
+      pedItaipu: checkItaipu,
+      pedCamil: checkCamil
     };
+
+    console.log(newFilters)
 
     setCurrentPage(1);
     setFilters(newFilters);
@@ -82,10 +121,11 @@ const OrderList = function () {
   function handleClean() {
     setInitialDate("");
     setFinalDate("");
-    setClient(EmptyCliente);
-    setEstoque(EmptyEstoque);
+    setClient({ ...EmptyCliente });
+    setEstoque({ ...EmptyEstoque });
     setOrderNumber("");
     setCheckNobres(false);
+    setCheckCuiaba(false);
     setCheckAcucar(false);
     setCheckItaipu(false);
     setCheckCamil(false);
@@ -146,6 +186,10 @@ const OrderList = function () {
                 checked={checkNobres} onChange={e => setCheckNobres(e.target.checked)}
               />
 
+              <CheckFilters name="cuiaba" label="Cuiabá" inline={true}
+                checked={checkCuiaba} onChange={e => setCheckCuiaba(e.target.checked)}
+              />
+
               <CheckFilters name="acucar" label="Açúcar" inline={true}
                 checked={checkAcucar} onChange={e => setCheckAcucar(e.target.checked)}
               />
@@ -176,11 +220,12 @@ const OrderList = function () {
               <Td>Situação</Td>
               <Td>Usina</Td>
               <Td>Produto</Td>
-              <Td>Qtde. (t)</Td>
-              <Td>R$ (t)</Td>
-              <Td>Despachado (t)</Td>
-              <Td>Cancelado (t)</Td>
-              <Td>Total (t)</Td>
+              <Td isNumeric>Qtde. (t)</Td>
+              <Td isNumeric>R$ (t)</Td>
+              <Td isNumeric>Despachado (t)</Td>
+              <Td isNumeric>Cancelado (t)</Td>
+              <Td isNumeric>Saldo (t)</Td>
+              <Td isNumeric>Total (t)</Td>
               <Td isAction>Ações</Td>
             </tr>
           </thead>
@@ -189,16 +234,17 @@ const OrderList = function () {
               return (
                 <tr key={pedido.PEDNUM}>
                   <Td isIdentifier>{pedido.PEDNUM}</Td>
-                  <Td>{pedido.PEDDATA}</Td>
+                  <Td>{formatDateToString(pedido.PEDDATA)}</Td>
                   <Td>{pedido.CLICOD + ' - ' + pedido.CLINOME}</Td>
                   <Td>{pedidoSituacaoEnum[pedido.PEDSIT]}</Td>
                   <Td>{pedido.FILIAL}</Td>
                   <Td>{pedido.ESTQNOME}</Td>
-                  <Td>{pedido.IPEDPESOTOT}</Td>
-                  <Td>{pedido.IPEDUNIT}</Td>
-                  <Td>{pedido.IPEDQUANTDESP}</Td>
-                  <Td>{pedido.IPEDQUANTCANC}</Td>
-                  <Td>{pedido.PEDTOTALBRUTO}</Td>
+                  <Td isNumeric>{formatNumberToAmount(pedido.IPEDPESOTOT)}</Td>
+                  <Td isNumeric>{formatNumberToReal(pedido.IPEDUNIT)}</Td>
+                  <Td isNumeric>{formatNumberToAmount(pedido.IPEDQUANTDESP)}</Td>
+                  <Td isNumeric>{formatNumberToAmount(pedido.IPEDQUANTCANC)}</Td>
+                  <Td isNumeric>{formatNumberToAmount(pedido.IPEDQUANTSALDO)}</Td>
+                  <Td isNumeric>{formatNumberToReal(pedido.PEDTOTALBRUTO)}</Td>
                   <Td isAction>
                     <div>
                       <IconDisplay to="/user/create" state={{ mode: 'display', id: pedido.PEDNUM }} />
@@ -210,6 +256,18 @@ const OrderList = function () {
               )
             })}
           </tbody>
+          <tfoot className={`${showFooter ? "" : "hidden"}`}>
+            <tr>
+              <Td colSpan={6}>Total:</Td>
+              <Td isNumeric>{formatNumberToAmount(dataGroup.IPEDPESOTOT)}</Td>
+              <Td isNumeric>{formatNumberToReal(dataGroup.IPEDUNIT)}</Td>
+              <Td isNumeric>{formatNumberToAmount(dataGroup.IPEDQUANTDESP)}</Td>
+              <Td isNumeric>{formatNumberToAmount(dataGroup.IPEDQUANTCANC)}</Td>
+              <Td isNumeric>{formatNumberToAmount(dataGroup.IPEDQUANTSALDO)}</Td>
+              <Td isNumeric>{formatNumberToReal(dataGroup.PEDTOTALBRUTO)}</Td>
+              <Td></Td>
+            </tr>
+          </tfoot>
         </Table>
       </List>
     </>

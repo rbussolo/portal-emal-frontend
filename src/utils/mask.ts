@@ -58,4 +58,22 @@ function removeMask(text: string) {
   return text.replace(/\D/g, "");
 }
 
-export { maskCnpj, maskCpf, maskCpfCnpj, maskCelular, maskNumerica, removeMask };
+function formatDateToString(date: string): string {
+  return new Date(date).toLocaleDateString('pt-br');
+}
+
+function formatNumberToReal(value: number): string {
+  return value.toLocaleString('pt-br', { 
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2 
+  });
+}
+
+function formatNumberToAmount(value: number): string {
+  return value.toLocaleString('pt-br', {
+    minimumFractionDigits: 3,
+    maximumFractionDigits: 3
+  });
+}
+
+export { maskCnpj, maskCpf, maskCpfCnpj, maskCelular, maskNumerica, removeMask, formatDateToString, formatNumberToReal, formatNumberToAmount };
