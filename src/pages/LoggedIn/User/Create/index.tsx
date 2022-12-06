@@ -43,7 +43,7 @@ const UserCreate = function() {
         setEmail(user.email);
         setCpfCnpj(maskCpfCnpj(user.cpf_cnpj));
         setCellphone(maskCelular(user.cellphone || ''));
-        setType(user.type);
+        setType(user.type!);
       }).catch(err => {
         alert.showAxiosError(err);
       }).finally(() => {

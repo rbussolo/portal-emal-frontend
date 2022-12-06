@@ -249,7 +249,7 @@ const OrderList = function () {
                     <div>
                       <IconDisplay to="/user/create" state={{ mode: 'display', id: pedido.PEDNUM }} />
                       <IconUpdate to="/user/create" state={{ mode: 'update', id: pedido.PEDNUM }} />
-                      <IconDelete onclick={(e) => { handleDelete(pedido.PEDNUM!) }} />
+                      <IconDelete to="#" onclick={(e) => { handleDelete(pedido.PEDNUM!) }} />
                     </div>
                   </Td>
                 </tr>

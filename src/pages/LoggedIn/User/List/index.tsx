@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../../../../components/Button";
 import { ButtonsFilter } from "../../../../components/Button/styles";
 import { InputFilters, SelectFilters } from "../../../../components/InputGroup";
-import { IconDelete, IconDisplay, IconUpdate, List, Table, Td } from "../../../../components/Table";
+import { IconDelete, IconDisplay, IconList, IconUpdate, List, Table, Td } from "../../../../components/Table";
 
 import { TitlePage } from "../../../../components/TitlePage";
 import { useAlert } from "../../../../contexts/AlertProvider";
@@ -135,12 +135,13 @@ const UserList = function () {
                   <Td>{maskCpfCnpj(user.cpf_cnpj)}</Td>
                   <Td>{user.name}</Td>
                   <Td>{user.email}</Td>
-                  <Td>{userTypeEnum[user.type]}</Td>
+                  <Td>{userTypeEnum[user.type!]}</Td>
                   <Td isAction>
                     <div>
-                      <IconDisplay to="/user/create" state={{ mode: 'display', id: user.id }} />
-                      <IconUpdate to="/user/create" state={{ mode: 'update', id: user.id }} />
-                      <IconDelete onclick={(e) => { handleDelete(user.id!) }} />
+                      <IconDisplay title="Visualizar" to="/user/create" state={{ mode: 'display', id: user.id }} />
+                      <IconUpdate title="Editar" to="/user/create" state={{ mode: 'update', id: user.id }} />
+                      <IconList title="Lista de Clientes" to="/user/client" state={{ id: user.id }} />
+                      <IconDelete title="Remover" onclick={(e) => { handleDelete(user.id!) }} />
                     </div>
                   </Td>
                 </tr>

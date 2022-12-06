@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthProvider/useAuth';
 import { Home } from '../pages/LoggedIn/Home';
 import { OrderCreate } from '../pages/LoggedIn/Order/Create';
 import { OrderList } from '../pages/LoggedIn/Order/List';
+import { UserClientCreate } from '../pages/LoggedIn/User/Client';
 import { UserCreate } from '../pages/LoggedIn/User/Create';
 import { UserList } from '../pages/LoggedIn/User/List';
 import { FirstAccess } from '../pages/LoggedOut/FirstAccess';
@@ -66,6 +67,7 @@ const RoutesApp = () => {
           <Route path="/order/create" element={<OrderCreate />} />
           <Route path="/user/list" element={<UserList />} />
           <Route path="/user/create" element={<UserCreate />} />
+          <Route path="/user/client" element={<UserClientCreate />} />
         </Route>
 
         <Route path="*" element={user ? (

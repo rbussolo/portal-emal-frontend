@@ -7,11 +7,12 @@ import { Cliente, EmptyCliente } from "../../services/cliente";
 import { maskCpfCnpj, removeMask } from "../../utils/mask";
 
 interface SearchClientProps {
+  label?: string;
   client: Cliente;
   onClientChange: (client: Cliente) => void;
 }
 
-const SearchClient = ({ client, onClientChange }: SearchClientProps) => {
+const SearchClient = ({ label = "CPF/CNPJ:", client, onClientChange }: SearchClientProps) => {
   let lastClientCpfCnpj = "";
 
   const [isOpen, setOpen] = useState(false);
@@ -40,7 +41,7 @@ const SearchClient = ({ client, onClientChange }: SearchClientProps) => {
   return (
     <>
       <div className='mb-3 row'>
-        <label className="col-sm-3 col-form-label">CPF/CNPJ:</label>
+        <label className="col-sm-3 col-form-label">{label}</label>
         <div className="col-sm-9">
           <div className="input-group">
             <InputCpfCnpj

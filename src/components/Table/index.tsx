@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, LinkProps } from "react-router-dom";
 import { ContainerNotFound, ContainerPagination, ContainerTable } from "./styles";
 
 interface ListProps {
@@ -117,12 +117,13 @@ interface IconProps {
   onclick?: (event: React.MouseEvent<HTMLElement>) => void;
   to?: string;
   state?: any;
+  title?: string;
 }
 
-function IconDisplay({ to, state, onclick }: IconProps) {
+function IconDisplay({ to, state, title, onclick }: IconProps) {
   if(to) {
     return (
-      <Link to={to} state={state}>
+      <Link to={to} state={state} title={title}>
         <i className="bi bi-eye icon-display"></i>
       </Link>
     )
@@ -131,10 +132,10 @@ function IconDisplay({ to, state, onclick }: IconProps) {
   return null;
 }
 
-function IconUpdate({ to, state, onclick }: IconProps) {
+function IconUpdate({ to, state, title, onclick }: IconProps) {
   if (to) {
     return (
-      <Link to={to} state={state}>
+      <Link to={to} state={state} title={title}>
         <i className="bi bi-pencil icon-update"></i>
       </Link>
     )
@@ -143,21 +144,37 @@ function IconUpdate({ to, state, onclick }: IconProps) {
   return null;
 }
 
-function IconDelete({ to, state, onclick }: IconProps) {
+function IconDelete({ to, state, title, onclick }: IconProps) {
   if (to) {
     return (
-      <Link to={to} state={state}> 
+      <Link to={to} state={state} title={title}> 
         <i className="bi bi-trash3 icon-delete"></i>
       </Link>
     )
   }
 
   if (onclick) {
-    return <i onClick={onclick} className="bi bi-trash3 icon-delete"></i>
+    return <i title={title} onClick={onclick} className="bi bi-trash3 icon-delete"></i>
+  }
+
+  return null;
+}
+
+function IconList({ to, state, title, onclick }: IconProps) {
+  if (to) {
+    return (
+      <Link to={to} state={state} title={title}>
+        <i className="bi bi-card-checklist icon-list"></i>
+      </Link>
+    )
+  }
+
+  if (onclick) {
+    return <i title={title} onClick={onclick} className="bi bi-card-checklist icon-list"></i>
   }
 
   return null;
 }
 
 
-export { List, Table, Td, Tr, IconDisplay, IconUpdate, IconDelete }
+export { List, Table, Td, Tr, IconDisplay, IconUpdate, IconDelete, IconList }

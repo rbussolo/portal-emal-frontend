@@ -19,7 +19,11 @@ function maskCpf(cpf: string): string {
   return cpf;
 }
 
-function maskCpfCnpj(cpfCnpj: string): string { //MASCARA PARA CPF E CNPJ	 
+function maskCpfCnpj(cpfCnpj: string | undefined): string { //MASCARA PARA CPF E CNPJ	 
+  if (!cpfCnpj) {
+    return "";
+  }
+
   cpfCnpj = cpfCnpj.replace(/\D/g, "");
   cpfCnpj = cpfCnpj.replace(/(\d{1,14})\d*/g, "$1");
 
