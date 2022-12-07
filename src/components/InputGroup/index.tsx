@@ -3,6 +3,8 @@ import { InputHTMLAttributes, SelectHTMLAttributes } from "react";
 interface InputGroupProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
   label: string;
+  labelClass?: string;
+  divInputClass?: string;
   inputClass?: string;
   groupClass?: string;
 }
@@ -32,11 +34,11 @@ export function InputGroup({ name, label, inputClass, groupClass, ...rest }: Inp
   )
 }
 
-export function InputFilters({ name, label, inputClass, groupClass, ...rest }: InputGroupProps) {
+export function InputFilters({ name, label, inputClass, groupClass, labelClass = "col-sm-3", divInputClass = "col-sm-9", ...rest }: InputGroupProps) {
   return (
     <div className={`mb-3 row ${groupClass ? groupClass : ''}`}>
-      <label htmlFor={name} className="col-sm-3 col-form-label">{label}:</label>
-      <div className="col-sm-9">
+      <label htmlFor={name} className={`${labelClass} col-form-label`}>{label}:</label>
+      <div className={divInputClass}>
         <input id={name} name={name} className={`form-control ${inputClass ? inputClass : ''}`} {...rest} />
       </div>
     </div>

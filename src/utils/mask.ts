@@ -58,6 +58,13 @@ function maskNumerica(text: string): string {
   return text.replace(/\D/g, "");
 }
 
+function maskInteger(text: string): number {
+  text = text.replace(/\D/g, "");
+  const number = parseInt(text);
+
+  return isNaN(number) ? 0 : number;
+}
+
 function removeMask(text: string) {
   return text.replace(/\D/g, "");
 }
@@ -80,4 +87,4 @@ function formatNumberToAmount(value: number): string {
   });
 }
 
-export { maskCnpj, maskCpf, maskCpfCnpj, maskCelular, maskNumerica, removeMask, formatDateToString, formatNumberToReal, formatNumberToAmount };
+export { maskCnpj, maskCpf, maskCpfCnpj, maskCelular, maskNumerica, maskInteger, removeMask, formatDateToString, formatNumberToReal, formatNumberToAmount };

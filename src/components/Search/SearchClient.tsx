@@ -52,7 +52,7 @@ const SearchClient = ({ label = "CPF/CNPJ:", client, onClientChange }: SearchCli
               onChange={e => onClientChange({ ...client, CLICNPJCPF: maskCpfCnpj(e.target.value) })}
               onBlur={onBlurClient}
             />
-            <ButtonSearch className="input-group-text" onClick={() => setOpen(true)}><i className="bi bi-search"></i></ButtonSearch>
+            <ButtonSearch type="button" className="input-group-text" onClick={() => setOpen(true) }><i className="bi bi-search"></i></ButtonSearch>
             <input
               type="text"
               className="form-control"

@@ -7,7 +7,7 @@ import { List, Table, Td, Tr } from '../../../../components/Table';
 import { TitlePopUp } from '../../../../components/TitlePopup';
 import { Container } from "./styles";
 import { Cliente, FiltersClientes, ListClientes } from '../../../../services/cliente';
-import { maskCpfCnpj } from '../../../../utils/mask';
+import { maskCpfCnpj, maskInteger } from '../../../../utils/mask';
 import { useLoading } from '../../../../contexts/LoadingProvider';
 import { api } from '../../../../services/api';
 import { useAlert } from '../../../../contexts/AlertProvider';
@@ -19,6 +19,7 @@ interface PopUpSearchClientProps {
 }
 
 export function PopUpSearchClient({ isOpen, onSelected, onRequestClose }: PopUpSearchClientProps) {
+  const [cod, setCod] = useState(0);
   const [name, setName] = useState("");
   const [cpfCnpj, setCpfCnpj] = useState("");
 
@@ -44,7 +45,7 @@ export function PopUpSearchClient({ isOpen, onSelected, onRequestClose }: PopUpS
   }
 
   function handleSearch() {
-    const newFilters: FiltersClientes = { name, cpfCnpj, page: 1, amount: 5 };
+    const newFilters: FiltersClientes = { name, cpfCnpj, cod, page: 1, amount: 5 };
 
     setCurrentPage(1);
     setFilters(newFilters);
@@ -78,8 +79,22 @@ export function PopUpSearchClient({ isOpen, onSelected, onRequestClose }: PopUpS
       <Container>
         <TitlePopUp title="Consulta de Clientes" onRequestClose={onRequestClose} />
 
+        <div className='row'>
+          <div className='col-md-6'>
+            <InputFilters 
+              label='CPF/CNPJ' 
+              name='cpfCnpj' 
+              labelClass='col-md-6 col-sm-3'
+              divInputClass='col-md-6 col-sm-9'
+              value={cpfCnpj} 
+              onChange={e => setCpfCnpj(maskCpfCnpj(e.target.value))} />
+          </div>
+          <div className='col-md-6'>
+            <InputFilters label='Código' name='codigo' value={cod} onChange={e => setCod(maskInteger(e.target.value))} />
+          </div>
+        </div>
+
         <InputFilters label='Nome' name='name' value={name} onChange={e => setName(e.target.value)}/>
-        <InputFilters label='CPF/CNPJ' name='cpfCnpj' value={cpfCnpj} onChange={e => setCpfCnpj(maskCpfCnpj(e.target.value))} />
 
         <ButtonsFilter>
           <Button buttonClass="btn-primary" label="Consultar" onClick={handleSearch}/>

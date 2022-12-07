@@ -12,7 +12,7 @@ import { useLoading } from "../../../../contexts/LoadingProvider"
 import { ContainerForm } from "../../../../global.styles"
 import { api } from "../../../../services/api"
 import { Cliente, EmptyCliente } from "../../../../services/cliente"
-import { EmptyUser, User, UserClient, userClientStateEnum } from "../../../../services/users"
+import { EmptyUser, User, UserClient } from "../../../../services/users"
 import { maskCpfCnpj } from "../../../../utils/mask"
 
 interface UserClientCreateParams {
@@ -161,7 +161,7 @@ const UserClientCreate = function () {
                 <Td isIdentifier>{userClient.id}</Td>
                 <Td>{userClient.client_cpf_cnpj}</Td>
                 <Td>{userClient.client_name}</Td>
-                <Td>
+                <Td className="column-btn-group">
                   <div className="btn-group" role="group" aria-label="Basic mixed styles example">
                     <button type="button" onClick={() => handleState(userClient, "required")} className={`btn ${userClient.state === "required" ? "btn-warning" : "btn-outline-warning"}`}>R</button>
                     <button type="button" onClick={() => handleState(userClient, "aproved")} className={`btn ${userClient.state === "aproved" ? "btn-success" : "btn-outline-success"}`}>A</button>

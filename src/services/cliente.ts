@@ -17,6 +17,7 @@ export interface ListClientes {
 export interface FiltersClientes {
   page?: number;
   amount?: number;
+  cod?: number;
   name?: string;
   cpfCnpj?: string;
 }
