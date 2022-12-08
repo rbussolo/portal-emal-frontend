@@ -9,6 +9,7 @@ import { OrderList } from '../pages/LoggedIn/Order/List';
 import { UserClientCreate } from '../pages/LoggedIn/User/Client';
 import { UserCreate } from '../pages/LoggedIn/User/Create';
 import { UserList } from '../pages/LoggedIn/User/List';
+import { Company } from '../pages/LoggedOut/Company';
 import { FirstAccess } from '../pages/LoggedOut/FirstAccess';
 import { ForgetPassword } from '../pages/LoggedOut/ForgetPassword';
 
@@ -47,6 +48,16 @@ const ProtectedRoute = () => {
   )
 };
 
+const OpenRoute = () => {
+  return (
+    <>
+      <Template>
+        <Outlet />
+      </Template>
+    </>
+  )
+}
+
 const RoutesApp = () => {
   const user = useAuth().getCurrentUser();
 
@@ -68,6 +79,10 @@ const RoutesApp = () => {
           <Route path="/user/list" element={<UserList />} />
           <Route path="/user/create" element={<UserCreate />} />
           <Route path="/user/client" element={<UserClientCreate />} />
+        </Route>
+
+        <Route element={<OpenRoute />}>
+          <Route path="/company" element={<Company />} />
         </Route>
 
         <Route path="*" element={user ? (

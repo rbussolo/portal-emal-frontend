@@ -5,10 +5,11 @@ function Footer(){
     <Container>
       <div>
         <div className="left">
-          <a href="/">@2022 - Grupo Emal</a>
+          <span>cac@grupoemal.com.br</span>
+          <span>(65) 3618-3354 / 3362 / 3366</span>
         </div>
         <div className="right">
-          <span>E-mail: cac@grupoemal.com.br</span> 
+          <a href="/company">Localização Indústrias</a> 
         </div>
       </div>
     </Container>

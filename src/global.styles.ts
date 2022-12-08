@@ -37,4 +37,24 @@ const ContainerForm = styled.form`
   }
 `;
 
-export { ContainerFiltros, Filtros, ContainerForm };
+const Container = styled.div`
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+
+    padding: 1.5rem;
+    background-color: #FFF;
+
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+
+    > hr {
+      margin-top: -5px;
+    }
+  }
+`
+
+export { Container, ContainerFiltros, Filtros, ContainerForm };

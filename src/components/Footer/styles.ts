@@ -14,18 +14,31 @@ export const Container = styled.div`
   > div {
     margin-left: 1rem;
     margin-right: 1rem;
-    
+
     width: 100%;
     max-width: 1200px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
-
+    
     a {
       color: white;
       text-decoration: none;
-      font-weight: 700;
+      font-weight: 400;
+
+      padding: 0.75rem;
+
+      &:hover {
+        background-color: #FFF;
+        color: #113a5f;
+      }
+    }
+
+    > div {
+      span + span {
+        margin-left: 20px;
+      }
     }
   }
 `
