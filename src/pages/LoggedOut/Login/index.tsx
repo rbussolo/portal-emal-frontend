@@ -6,10 +6,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { InputGroup } from "../../../components/InputGroup";
 import { Button } from "../../../components/Button";
 import { Option, Options } from "../../../components/Options";
-import { useAlert } from "../../../contexts/AlertProvider";
 import { Container } from "./styles";
 import { TitlePage } from "../../../components/TitlePage";
 import { useLoading } from "../../../contexts/LoadingProvider";
+import { Alert } from "../../../utils/alert";
 
 function Login(){
   const [email, setEmail] = useState("");
@@ -18,16 +18,15 @@ function Login(){
   const auth = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const alert = useAlert();
   const load = useLoading();
 
   useEffect(() => {
     if (location.state?.passwordChanged === true) {
-      alert.showSuccess("Operação realizada com sucesso!");
+      Alert.showSuccess("Operação realizada com sucesso!");
       
       window.history.replaceState({}, document.title);
     } else if (location.state?.tokenError === true) {
-      alert.showError({ message: "Alteração de senha inválida, tempo limite atingido ou alteração já realizada, realiza uma nova alteração se necessário!" });
+      Alert.showError({ message: "Alteração de senha inválida, tempo limite atingido ou alteração já realizada, realiza uma nova alteração se necessário!" });
 
       window.history.replaceState({}, document.title);
     }
@@ -41,7 +40,7 @@ function Login(){
     auth.authenticate(email, password).then(() => {
       navigate("/home");
     }).catch(err => {
-      alert.showAxiosError(err);
+      Alert.showAxiosError(err);
     }).finally(() => {
       load.hideLoading();
     });

@@ -10,7 +10,7 @@ import { Cliente, FiltersClientes, ListClientes } from '../../../../services/cli
 import { maskCpfCnpj, maskInteger } from '../../../../utils/mask';
 import { useLoading } from '../../../../contexts/LoadingProvider';
 import { api } from '../../../../services/api';
-import { useAlert } from '../../../../contexts/AlertProvider';
+import { Alert } from '../../../../utils/alert';
 
 interface PopUpSearchClientProps {
   isOpen: boolean;
@@ -28,7 +28,6 @@ export function PopUpSearchClient({ isOpen, onSelected, onRequestClose }: PopUpS
   const [data, setData] = useState<ListClientes>({ count: 0, countPerPage: 0, showResults: false, clients: [] });
 
   const load = useLoading();
-  const alert = useAlert();
 
   function fetchData(filters: FiltersClientes) {
     load.showLoading();
@@ -38,7 +37,7 @@ export function PopUpSearchClient({ isOpen, onSelected, onRequestClose }: PopUpS
 
       setData(data);
     }).catch((err) => {
-      alert.showAxiosError(err);
+      Alert.showAxiosError(err);
     }).finally(() => {
       load.hideLoading();
     });

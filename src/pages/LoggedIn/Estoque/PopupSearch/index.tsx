@@ -8,9 +8,9 @@ import { Container } from './styles';
 import { ButtonsFilter } from '../../../../components/Button/styles';
 import { Button } from '../../../../components/Button';
 import { useLoading } from '../../../../contexts/LoadingProvider';
-import { useAlert } from '../../../../contexts/AlertProvider';
 import { api } from '../../../../services/api';
 import { List, Table, Td, Tr } from '../../../../components/Table';
+import { Alert } from '../../../../utils/alert';
 
 interface PopUpSearchEstoqueProps {
   isOpen: boolean;
@@ -27,7 +27,6 @@ function PopUpSearchEstoque({ isOpen, onSelected, onRequestClose }: PopUpSearchE
   const [data, setData] = useState<ListEstoques>({ count: 0, countPerPage: 0, showResults: false, estoques: [] });
 
   const load = useLoading();
-  const alert = useAlert();
 
   function fetchData(filters: FiltersEstoques) {
     load.showLoading();
@@ -37,7 +36,7 @@ function PopUpSearchEstoque({ isOpen, onSelected, onRequestClose }: PopUpSearchE
 
       setData(data);
     }).catch((err) => {
-      alert.showAxiosError(err);
+      Alert.showAxiosError(err);
     }).finally(() => {
       load.hideLoading();
     });

@@ -9,18 +9,17 @@ import { SearchEstoque } from "../../../../components/Search/SearchProduct";
 import { IconDelete, IconDisplay, IconUpdate, List, Table, Td } from "../../../../components/Table";
 
 import { TitlePage } from "../../../../components/TitlePage";
-import { useAlert } from "../../../../contexts/AlertProvider";
 import { useLoading } from "../../../../contexts/LoadingProvider";
 import { ContainerFiltros, Filtros } from "../../../../global.styles";
 import { api } from "../../../../services/api";
 import { Cliente, EmptyCliente } from "../../../../services/cliente";
 import { EmptyEstoque, Estoque } from "../../../../services/estoque";
 import { EmptyPedidoGroup, FiltersPedidos, ListPedidos, PedidoGroup, pedidoSituacaoEnum } from "../../../../services/pedido";
+import { Alert } from "../../../../utils/alert";
 import { formatDateToString, formatNumberToAmount, formatNumberToReal, maskNumerica } from "../../../../utils/mask";
 
 const OrderList = function () {
   const navigate = useNavigate();
-  const alert = useAlert();
   const load = useLoading();
 
   const [filters, setFilters] = useState<FiltersPedidos>({});
@@ -47,7 +46,7 @@ const OrderList = function () {
     api.get("/pedidos", { params: filters }).then(response => {
       setData(response.data as ListPedidos);
     }).catch((err) => {
-      alert.showAxiosError(err);
+      Alert.showAxiosError(err);
     }).finally(() => {
       load.hideLoading();
     });
@@ -132,15 +131,15 @@ const OrderList = function () {
   }
 
   function handleDelete(id: number) {
-    alert.showConfirm("Realmente deseja remover este registro?", () => {
+    Alert.showConfirm("Realmente deseja remover este registro?", () => {
       load.showLoading();
 
       api.delete("/users/" + id).then(() => {
         fetchData(filters);
 
-        alert.showSuccess("Registro removido com sucesso!");
+        Alert.showSuccess("Registro removido com sucesso!");
       }).catch(err => {
-        alert.showAxiosError(err);
+        Alert.showAxiosError(err);
       }).finally(() => {
         load.hideLoading();
       });

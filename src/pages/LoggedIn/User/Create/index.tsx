@@ -5,11 +5,11 @@ import { Button } from "../../../../components/Button";
 import { ButtonsFilter } from "../../../../components/Button/styles";
 import { InputForm, SelectForm } from "../../../../components/InputGroup";
 import { TitlePage } from "../../../../components/TitlePage";
-import { useAlert } from "../../../../contexts/AlertProvider";
 import { useLoading } from "../../../../contexts/LoadingProvider";
 import { ContainerForm } from "../../../../global.styles";
 import { api } from "../../../../services/api";
 import { User, UserType } from "../../../../services/users";
+import { Alert } from "../../../../utils/alert";
 import { maskCelular, maskCpfCnpj } from "../../../../utils/mask";
 
 interface UserCreateParams {
@@ -23,7 +23,6 @@ const UserCreate = function() {
   const { id, mode } = location.state as UserCreateParams;
   const disabled = mode === 'display' ? true : false;
   const load = useLoading();
-  const alert = useAlert();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -45,7 +44,7 @@ const UserCreate = function() {
         setCellphone(maskCelular(user.cellphone || ''));
         setType(user.type!);
       }).catch(err => {
-        alert.showAxiosError(err);
+        Alert.showAxiosError(err);
       }).finally(() => {
         load.hideLoading();
       });
@@ -59,7 +58,7 @@ const UserCreate = function() {
     if(!form.checkValidity()) {
       form.classList.add('was-validated');
 
-      return alert.showError({ message: 'Preencha todos os campos obrigatórios!' });
+      return Alert.showError({ message: 'Preencha todos os campos obrigatórios!' });
     }
 
     form.classList.remove('was-validated');
@@ -88,7 +87,7 @@ const UserCreate = function() {
     api.request({ url, method, data: user }).then(response => {
       navigate("/user/list", { state: { success: true }});
     }).catch(err => {
-      alert.showAxiosError(err);
+      Alert.showAxiosError(err);
     }).finally(() => {
       load.hideLoading();
     });

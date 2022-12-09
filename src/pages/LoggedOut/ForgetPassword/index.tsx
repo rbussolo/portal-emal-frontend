@@ -6,10 +6,10 @@ import { useTimer } from "../../../contexts/TimerData";
 import { maskCpfCnpj } from "../../../utils/mask";
 import { Option, Options } from "../../../components/Options";
 import { api } from "../../../services/api";
-import { useAlert } from "../../../contexts/AlertProvider";
 import { TitlePage } from "../../../components/TitlePage";
 import { Container } from "./styles";
 import { useLoading } from "../../../contexts/LoadingProvider";
+import { Alert } from "../../../utils/alert";
 
 function ForgetPassword() {
   const [cpfCnpj, setCpfCnpj] = useState("");
@@ -19,7 +19,6 @@ function ForgetPassword() {
 
   const timer = useTimer(); 
   const TIMER_TAG = "FORGOT_PASSWORD";
-  const alert = useAlert();
   const load = useLoading();
 
   useEffect(() => {
@@ -29,7 +28,7 @@ function ForgetPassword() {
       setCpfCnpj(dataStorage.data.data.cpf_cnpj);
       setEmail(dataStorage.data.data.email);
       
-      alert.showSuccess("Foi enviado um e-mail com instruções para continuar o cadastro, favor verifique.");
+      Alert.showSuccess("Foi enviado um e-mail com instruções para continuar o cadastro, favor verifique.");
       setWaiting(true);
 
       timer.startUpdate({
@@ -46,7 +45,7 @@ function ForgetPassword() {
     load.showLoading();
 
     api.post('auth/forgotPassword', { cpf_cnpj: cpfCnpj, email }).then(response => {
-      alert.showSuccess("Foi enviado um e-mail com instruções para resetar sua senha, favor verifique.");
+      Alert.showSuccess("Foi enviado um e-mail com instruções para resetar sua senha, favor verifique.");
       setWaiting(true);
 
       timer.startTimer(TIMER_TAG, { cpf_cnpj: cpfCnpj, email });
@@ -57,7 +56,7 @@ function ForgetPassword() {
         stop: () => { setWaiting(false); }
       });
     }).catch(err => {
-      alert.showAxiosError(err);
+      Alert.showAxiosError(err);
     }).finally(() => {
       load.hideLoading();
     });

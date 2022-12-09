@@ -6,10 +6,10 @@ import { maskCnpj } from "../../../utils/mask";
 import { useTimer } from "../../../contexts/TimerData";
 import { Option, Options } from "../../../components/Options";
 import { api } from "../../../services/api";
-import { useAlert } from "../../../contexts/AlertProvider";
 import { ButtonLikeLink, Container } from "./styles";
 import { TitlePage } from "../../../components/TitlePage";
 import { useLoading } from "../../../contexts/LoadingProvider";
+import { Alert } from "../../../utils/alert";
 
 function FirstAccess() {
   const [cnpj, setCnpj] = useState("");
@@ -19,7 +19,6 @@ function FirstAccess() {
 
   const timer = useTimer(); 
   const TIMER_TAG = "FIRST_ACCESS";
-  const alert = useAlert();
   const load = useLoading();
 
   useEffect(() => {
@@ -29,7 +28,7 @@ function FirstAccess() {
       setCnpj(dataStorage.data.data.cpf_cnpj);
       setEmail(dataStorage.data.data.email);
       
-      alert.showSuccess("Foi enviado um e-mail com instruções para continuar o cadastro, favor verifique.");
+      Alert.showSuccess("Foi enviado um e-mail com instruções para continuar o cadastro, favor verifique.");
       setWaiting(true);
 
       timer.startUpdate({ 
@@ -46,7 +45,7 @@ function FirstAccess() {
     load.showLoading();
 
     api.post('auth/migrate', { cpf_cnpj: cnpj, email }).then(() => {
-      alert.showSuccess("Foi enviado um e-mail com instruções para continuar o cadastro, favor verifique.");
+      Alert.showSuccess("Foi enviado um e-mail com instruções para continuar o cadastro, favor verifique.");
       setWaiting(true);
 
       timer.startTimer(TIMER_TAG, { cpf_cnpj: cnpj, email });
@@ -57,21 +56,21 @@ function FirstAccess() {
         stop: () => { setWaiting(false); }
       });
     }).catch(err => {
-      alert.showAxiosError(err);
+      Alert.showAxiosError(err);
     }).finally(() => {
       load.hideLoading();
     });
   }
 
   async function handleForgetEmail() {
-    if (!cnpj) return alert.showError({ message: "É necessário informar o CNPJ da empresa!" });
+    if (!cnpj) return Alert.showError({ message: "É necessário informar o CNPJ da empresa!" });
 
     load.showLoading();
 
     api.post('auth/forgotEmail', { cpf_cnpj: cnpj }).then(response => {
-      alert.showInfo("O e-mail cadastrado para este CNPJ é: <br /><b>" + response.data.email + "</b>");
+      Alert.showInfo("O e-mail cadastrado para este CNPJ é: <br /><b>" + response.data.email + "</b>");
     }).catch(err => {
-      alert.showAxiosError(err);
+      Alert.showAxiosError(err);
     }).finally(() => {
       load.hideLoading();
     });

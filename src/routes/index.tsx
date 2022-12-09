@@ -12,7 +12,6 @@ import { UserList } from '../pages/LoggedIn/User/List';
 import { Company } from '../pages/LoggedOut/Company';
 import { FirstAccess } from '../pages/LoggedOut/FirstAccess';
 import { ForgetPassword } from '../pages/LoggedOut/ForgetPassword';
-
 import { Login } from '../pages/LoggedOut/Login';
 import { ResetPassword } from '../pages/LoggedOut/ResetPassword';
 

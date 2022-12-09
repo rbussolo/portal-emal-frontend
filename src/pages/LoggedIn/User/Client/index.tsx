@@ -7,12 +7,12 @@ import { InputForm } from "../../../../components/InputGroup"
 import { SearchClient } from "../../../../components/Search/SearchClient"
 import { IconDelete, Table, Td } from "../../../../components/Table"
 import { TitlePage } from "../../../../components/TitlePage"
-import { useAlert } from "../../../../contexts/AlertProvider"
 import { useLoading } from "../../../../contexts/LoadingProvider"
 import { ContainerForm } from "../../../../global.styles"
 import { api } from "../../../../services/api"
 import { Cliente, EmptyCliente } from "../../../../services/cliente"
 import { EmptyUser, User, UserClient } from "../../../../services/users"
+import { Alert } from "../../../../utils/alert"
 import { maskCpfCnpj } from "../../../../utils/mask"
 
 interface UserClientCreateParams {
@@ -22,7 +22,6 @@ interface UserClientCreateParams {
 const UserClientCreate = function () {
   const navigate = useNavigate();
   const location = useLocation();
-  const alert = useAlert();
   const load = useLoading();
 
   const { id } = location.state as UserClientCreateParams;
@@ -34,7 +33,7 @@ const UserClientCreate = function () {
     return api.get("/users/clients/" + id).then(response => {
       setUserClients(response.data);
     }).catch(err => {
-      alert.showAxiosError(err);
+      Alert.showAxiosError(err);
     });
   }
 
@@ -45,7 +44,7 @@ const UserClientCreate = function () {
       api.get("/users/" + id).then(response => {
         setUser(response.data);
       }).catch(err => {
-        alert.showAxiosError(err);
+        Alert.showAxiosError(err);
       }),
       fetchUserClients()
     ]).finally(() => {
@@ -54,7 +53,7 @@ const UserClientCreate = function () {
   }, []);
 
   function handleAdd(event: FormEvent) {
-    if(!client.CLICOD) return alert.showError({ message: "É necessário informar o Cliente!" });
+    if (!client.CLICOD) return Alert.showError({ message: "É necessário informar o Cliente!" });
     
     load.showLoading();
 
@@ -64,7 +63,7 @@ const UserClientCreate = function () {
     }).then(response => {
       setUserClients([ ...userClients, response.data ])
     }).catch(err => {
-      alert.showAxiosError(err);
+      Alert.showAxiosError(err);
     }).finally(() => {
       load.hideLoading();
     });
@@ -78,22 +77,22 @@ const UserClientCreate = function () {
     api.post("/users/clients/" + id).then(() => {
       navigate("/user/list");
     }).catch(err => {
-      alert.showAxiosError(err);
+      Alert.showAxiosError(err);
     }).finally(() => {
       load.hideLoading();
     });
   }
 
   function handleDelete(id: number){
-    alert.showConfirm("Realmente deseja remover este registro?", () => {
+    Alert.showConfirm("Realmente deseja remover este registro?", () => {
       load.showLoading();
 
       api.delete("/users/clients/" + id).then(() => {
         fetchUserClients();
 
-        alert.showSuccess("Registro removido com sucesso!");
+        Alert.showSuccess("Registro removido com sucesso!");
       }).catch(err => {
-        alert.showAxiosError(err);
+        Alert.showAxiosError(err);
       }).finally(() => {
         load.hideLoading();
       });
@@ -110,7 +109,7 @@ const UserClientCreate = function () {
     }).then(response => {
       fetchUserClients();
     }).catch(err => {
-      alert.showAxiosError(err);
+      Alert.showAxiosError(err);
     }).finally(() => {
       load.hideLoading();
     });

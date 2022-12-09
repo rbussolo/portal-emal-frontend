@@ -5,10 +5,10 @@ import { InputGroup } from "../../../components/InputGroup";
 import { Button } from "../../../components/Button";
 import { api } from "../../../services/api";
 import { Option, Options } from "../../../components/Options";
-import { useAlert } from "../../../contexts/AlertProvider";
 import { Container } from "./styles";
 import { TitlePage } from "../../../components/TitlePage";
 import { useLoading } from "../../../contexts/LoadingProvider";
+import { Alert } from "../../../utils/alert";
 
 function ResetPassword() {
   const [newPassword, setNewPassword] = useState("");
@@ -16,7 +16,6 @@ function ResetPassword() {
   
   const { token } = useParams();
   const navigate = useNavigate();
-  const alert = useAlert();
   const loading = useLoading();
 
   useEffect(() => {
@@ -32,14 +31,14 @@ function ResetPassword() {
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
-    if (newPassword !== newPasswordAgain) return alert.showError({ message: "As senhas informadas devem ser iguais." });
+    if (newPassword !== newPasswordAgain) return Alert.showError({ message: "As senhas informadas devem ser iguais." });
     
     loading.showLoading();
 
     api.post('auth/resetPassword/' + token, { password: newPassword }).then(response => {
       navigate("/login", { state: { passwordChanged: true } });
     }).catch(err => {
-      alert.showAxiosError(err);
+      Alert.showAxiosError(err);
     }).finally(() => {
       loading.hideLoading();
     });

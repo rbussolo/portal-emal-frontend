@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import { useState } from "react";
-import { useAlert } from "../../contexts/AlertProvider";
 import { PopUpSearchClient } from "../../pages/LoggedIn/Client/PopupSearch";
 import { api } from "../../services/api";
 import { Cliente, EmptyCliente } from "../../services/cliente";
 import { maskCpfCnpj, removeMask } from "../../utils/mask";
+import { Alert } from "../../utils/alert";
 
 interface SearchClientProps {
   label?: string;
@@ -17,8 +17,6 @@ const SearchClient = ({ label = "CPF/CNPJ:", client, onClientChange }: SearchCli
 
   const [isOpen, setOpen] = useState(false);
 
-  const alert = useAlert();
-
   function onBlurClient() {
     if (!client.CLICNPJCPF) {
       onClientChange(EmptyCliente);
@@ -26,7 +24,7 @@ const SearchClient = ({ label = "CPF/CNPJ:", client, onClientChange }: SearchCli
       api.get("/clients/byCpfCnpj/" + removeMask(client.CLICNPJCPF)).then(response => {
         onClientChange(response.data);
       }).catch(err => {
-        alert.showAxiosError(err);
+        Alert.showAxiosError(err);
       });
     }
 

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { useAlert } from '../../contexts/AlertProvider';
 import { PopUpSearchEstoque } from '../../pages/LoggedIn/Estoque/PopupSearch';
 import { api } from '../../services/api';
 import { EmptyEstoque, Estoque } from "../../services/estoque";
+import { Alert } from '../../utils/alert';
 import { maskNumerica } from '../../utils/mask';
 
 interface SearchEstoqueProps {
@@ -20,7 +20,6 @@ interface Estoques {
 const SearchEstoque = ({ estoque, onEstoqueChange }: SearchEstoqueProps) => {
   let lastEstoqueCodigo = "";
   const [isOpen, setOpen] = useState(false);
-  const alert = useAlert();
 
   function onBlurEstoque() {
     if (!estoque.ESTQCOD) {
@@ -31,7 +30,7 @@ const SearchEstoque = ({ estoque, onEstoqueChange }: SearchEstoqueProps) => {
 
         onEstoqueChange(estoques.estoques[0]);
       }).catch(err => {
-        alert.showAxiosError(err);
+        Alert.showAxiosError(err);
       });
     }
 

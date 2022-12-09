@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
+
 import { RoutesApp } from './routes';
 import { AuthProvider } from './contexts/AuthProvider';
 import { TimerProvider } from './contexts/TimerData';
-import { AlertProvider } from './contexts/AlertProvider';
 import { BrowserRouter } from 'react-router-dom';
 import { LoadingProvider } from './contexts/LoadingProvider';
 
@@ -16,11 +17,9 @@ root.render(
     <BrowserRouter>
       <AuthProvider>
         <TimerProvider>
-          <AlertProvider>
-            <LoadingProvider>
-              <RoutesApp />
-            </LoadingProvider>
-          </AlertProvider>
+          <LoadingProvider>
+            <RoutesApp />
+          </LoadingProvider>
         </TimerProvider>
       </AuthProvider>
     </BrowserRouter>
