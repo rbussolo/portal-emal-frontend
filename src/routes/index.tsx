@@ -76,8 +76,8 @@ const RoutesApp = () => {
           <Route path="/order/list" element={<OrderList />} />
           <Route path="/order/create" element={<OrderCreate />} />
           <Route path="/user/list" element={<UserList />} />
-          <Route path="/user/create" element={<UserCreate />} />
-          <Route path="/user/client" element={<UserClientCreate />} />
+          <Route path="/user/create/:mode/:user_id" element={<UserCreate />} />
+          <Route path="/user/client/:user_id" element={<UserClientCreate />} />
         </Route>
 
         <Route element={<OpenRoute />}>

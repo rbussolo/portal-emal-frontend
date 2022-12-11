@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useFormik } from "formik";
+
 import { InputGroup } from "../../../components/InputGroup";
 import { Button } from "../../../components/Button";
 import { useTimer } from "../../../contexts/TimerData";
@@ -12,55 +14,57 @@ import { useLoading } from "../../../contexts/LoadingProvider";
 import { Alert } from "../../../utils/alert";
 
 function ForgetPassword() {
-  const [cpfCnpj, setCpfCnpj] = useState("");
-  const [email, setEmail] = useState("");
-  const [isWaiting, setWaiting] = useState(false);
-  const [seconds, setSeconds] = useState(0);
-
-  const timer = useTimer(); 
-  const TIMER_TAG = "FORGOT_PASSWORD";
   const load = useLoading();
+  const formik = useFormik({
+    initialValues: {
+      cpfCnpj: "",
+      email: "",
+      isWaiting: false,
+      seconds: 0
+    },
+    onSubmit: ({ cpfCnpj, email }) => {
+      load.showLoading();
+
+      api.post('auth/forgotPassword', { cpf_cnpj: cpfCnpj, email }).then(response => {
+        Alert.showSuccess("Foi enviado um e-mail com instruções para resetar sua senha, favor verifique.");
+        formik.setFieldValue("isWaiting", true);
+
+        timer.startTimer(TIMER_TAG, { cpf_cnpj: cpfCnpj, email });
+        timer.startUpdate({
+          timer,
+          tag: TIMER_TAG,
+          update: seconds => formik.setFieldValue("seconds", seconds),
+          stop: () => { formik.setFieldValue("isWaiting", false); }
+        });
+      }).catch(err => {
+        Alert.showAxiosError(err);
+      }).finally(() => {
+        load.hideLoading();
+      });
+    }
+  });
+
+  const TIMER_TAG = "FORGOT_PASSWORD";
+  const timer = useTimer();
 
   useEffect(() => {
     const dataStorage = timer.hasTimer(TIMER_TAG);
     
     if(dataStorage.isAlive && dataStorage.data) {
-      setCpfCnpj(dataStorage.data.data.cpf_cnpj);
-      setEmail(dataStorage.data.data.email);
+      formik.setFieldValue("cpfCnpj", dataStorage.data.data.cpf_cnpj);
+      formik.setFieldValue("email", dataStorage.data.data.email);
+      formik.setFieldValue("isWaiting", true);
       
       Alert.showSuccess("Foi enviado um e-mail com instruções para continuar o cadastro, favor verifique.");
-      setWaiting(true);
 
       timer.startUpdate({
         timer,
         tag: TIMER_TAG,
-        update: seconds => setSeconds(seconds),
-        stop: () => { setWaiting(false); }
+        update: seconds => formik.setFieldValue("seconds", seconds),
+        stop: () => { formik.setFieldValue("isWaiting", false); }
       });
     }
   }, []);
-
-  function handleSubmit(event: FormEvent) {
-    event.preventDefault();
-    load.showLoading();
-
-    api.post('auth/forgotPassword', { cpf_cnpj: cpfCnpj, email }).then(response => {
-      Alert.showSuccess("Foi enviado um e-mail com instruções para resetar sua senha, favor verifique.");
-      setWaiting(true);
-
-      timer.startTimer(TIMER_TAG, { cpf_cnpj: cpfCnpj, email });
-      timer.startUpdate({
-        timer,
-        tag: TIMER_TAG,
-        update: seconds => setSeconds(seconds),
-        stop: () => { setWaiting(false); }
-      });
-    }).catch(err => {
-      Alert.showAxiosError(err);
-    }).finally(() => {
-      load.hideLoading();
-    });
-  }
 
   return (
     <>
@@ -68,15 +72,15 @@ function ForgetPassword() {
         <div>
           <TitlePage title="Portal de Atendimento" description="#esqueceuSuaSenha" />
       
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={formik.handleSubmit}>
             <InputGroup
               groupClass="mb-1"
               name="cpfCnpj"
               label="CPF/CNPJ"
               type="text"
               placeholder="CPF/CNPJ"
-              value={cpfCnpj}
-              onChange={event => setCpfCnpj(maskCpfCnpj(event.target.value))}
+              value={formik.values.cpfCnpj}
+              onChange={event => formik.setFieldValue('cpfCnpj', maskCpfCnpj(event.target.value))}
             />
 
             <InputGroup
@@ -85,15 +89,15 @@ function ForgetPassword() {
               label="E-mail"
               type="email"
               placeholder="E-mail de contato"
-              value={email}
-              onChange={event => setEmail(event.target.value)}
+              value={formik.values.email}
+              onChange={formik.handleChange}
             />
 
-            <Button type="submit" buttonClass="btn-primary" isLoading={isWaiting} label={!isWaiting ? "Solicitar nova senha" : "Aguarde um momento"}></Button>
+            <Button type="submit" buttonClass="btn-primary" isLoading={formik.values.isWaiting} label={!formik.values.isWaiting ? "Solicitar nova senha" : "Aguarde um momento"}></Button>
             { 
-              isWaiting ? (
+              formik.values.isWaiting ? (
                 <div className="waiting">
-                  Aguarde por {seconds} segundo(s) para realizar uma nova solicitação.
+                  Aguarde por {formik.values.seconds} segundo(s) para realizar uma nova solicitação.
                 </div>
                 ) : null
             }

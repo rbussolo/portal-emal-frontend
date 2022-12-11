@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FormEvent, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "../../../../components/Button";
 import { ButtonsFilter } from "../../../../components/Button/styles";
 import { InputForm, SelectForm } from "../../../../components/InputGroup";
@@ -8,41 +9,72 @@ import { TitlePage } from "../../../../components/TitlePage";
 import { useLoading } from "../../../../contexts/LoadingProvider";
 import { ContainerForm } from "../../../../global.styles";
 import { api } from "../../../../services/api";
-import { User, UserType } from "../../../../services/users";
+import { User } from "../../../../services/users";
 import { Alert } from "../../../../utils/alert";
 import { maskCelular, maskCpfCnpj } from "../../../../utils/mask";
 
-interface UserCreateParams {
-  id?: number;
-  mode: string;
-}
-
 const UserCreate = function() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { id, mode } = location.state as UserCreateParams;
+  const { mode, user_id } = useParams();
   const disabled = mode === 'display' ? true : false;
   const load = useLoading();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [cpfCnpj, setCpfCnpj] = useState("");
-  const [cellphone, setCellphone] = useState("");
-  const [type, setType] = useState("");
-  const [password, setPassword] = useState("");
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      cpfCnpj: "",
+      cellphone: "",
+      type: "",
+      password: ""
+    },
+    onSubmit: ({ name, email, cpfCnpj, cellphone, type, password }) => {
+      const form = document.querySelector("form") as HTMLFormElement;
 
-  useEffect(() => {
-    if(mode !== 'insert' && id) {
+      if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+
+        return Alert.showError({ message: 'Preencha todos os campos obrigatórios!' });
+      }
+
+      form.classList.remove('was-validated');
+
       load.showLoading();
 
-      api.get("/users/" + id).then(response => {
+      const method = mode !== 'insert' ? 'put' : 'post';
+      const url = mode !== 'insert' ? `/users/${user_id}` : "/users";
+      const user = { 
+        id: mode !== 'insert' ? user_id : 0,
+        cpf_cnpj: cpfCnpj,
+        name,
+        email,
+        type,
+        cellphone,
+        password
+      };
+
+      api.request({ url, method, data: user }).then(response => {
+        navigate("/user/list", { state: { success: true } });
+      }).catch(err => {
+        Alert.showAxiosError(err);
+      }).finally(() => {
+        load.hideLoading();
+      });
+    }
+  });
+
+  useEffect(() => {
+    if (mode !== 'insert' && user_id) {
+      load.showLoading();
+
+      api.get(`/users/${user_id}`).then(response => {
         const user = response.data as User;
 
-        setName(user.name);
-        setEmail(user.email);
-        setCpfCnpj(maskCpfCnpj(user.cpf_cnpj));
-        setCellphone(maskCelular(user.cellphone || ''));
-        setType(user.type!);
+        formik.setFieldValue("name", user.name);
+        formik.setFieldValue("email", user.email);
+        formik.setFieldValue("cpfCnpj", maskCpfCnpj(user.cpf_cnpj));
+        formik.setFieldValue("cellphone", maskCelular(user.cellphone || ""));
+        formik.setFieldValue("type", user.type);
       }).catch(err => {
         Alert.showAxiosError(err);
       }).finally(() => {
@@ -51,60 +83,18 @@ const UserCreate = function() {
     }
   }, []);
 
-  async function handleSubmit(event: FormEvent) {
-    event.preventDefault();
-    const form = event.target as HTMLFormElement;
-
-    if(!form.checkValidity()) {
-      form.classList.add('was-validated');
-
-      return Alert.showError({ message: 'Preencha todos os campos obrigatórios!' });
-    }
-
-    form.classList.remove('was-validated');
-    
-    load.showLoading();
-
-    const userType: keyof UserType = type as keyof UserType;
-
-    let method = 'post';
-    let url = "/users";
-    let user: User = {
-      id, 
-      cpf_cnpj: cpfCnpj,
-      name,
-      email,
-      type: userType,
-      cellphone,
-      password
-    }
-
-    if (mode !== 'insert') {
-      method = 'put';
-      url = "/users/" + id;
-    }
-
-    api.request({ url, method, data: user }).then(response => {
-      navigate("/user/list", { state: { success: true }});
-    }).catch(err => {
-      Alert.showAxiosError(err);
-    }).finally(() => {
-      load.hideLoading();
-    });
-  }
-
   return (
-    <ContainerForm onSubmit={handleSubmit} className="container needs-validation" noValidate>
+    <ContainerForm onSubmit={formik.handleSubmit} className="container needs-validation" noValidate>
       <TitlePage title="Cadastro de Usuário" />
 
       <hr />
 
-      <InputForm label="Nome" name="name"
+      <InputForm label="Nome" name="name" 
         type="text"
         placeholder="Nome do usuário"
         disabled={disabled}
-        value={name}
-        onChange={(e) => setName(e.target.value.toUpperCase())}
+        value={formik.values.name}
+        onChange={(e) => formik.setFieldValue("name", e.target.value.toUpperCase())}
         required
       />
 
@@ -112,8 +102,8 @@ const UserCreate = function() {
         type="text"
         placeholder="E-mail do usuário"
         disabled={disabled}
-        value={email}
-        onChange={(e) => setEmail(e.target.value.toLowerCase())}
+        value={formik.values.email}
+        onChange={(e) => formik.setFieldValue("email", e.target.value.toLowerCase())}
         required
       />
 
@@ -121,8 +111,8 @@ const UserCreate = function() {
         type="text"
         placeholder="CPF/CNPJ da pessoa"
         disabled={disabled}
-        value={cpfCnpj}
-        onChange={(e) => setCpfCnpj(maskCpfCnpj(e.target.value))}
+        value={formik.values.cpfCnpj}
+        onChange={(e) => formik.setFieldValue("cpfCnpj", maskCpfCnpj(e.target.value))}
         required
       />
 
@@ -130,24 +120,31 @@ const UserCreate = function() {
         type="text"
         placeholder="Celular da pessoa"
         disabled={disabled}
-        value={cellphone}
-        onChange={(e) => setCellphone(maskCelular(e.target.value))}
+        value={formik.values.cellphone}
+        onChange={(e) => formik.setFieldValue("cellphone", maskCelular(e.target.value))}
         required
       />
 
-      <SelectForm label="Tipo" name="type" value={type} disabled={disabled} onChange={(e) => setType(e.target.value)} required>
+      <SelectForm 
+          label="Tipo" 
+          name="type" 
+          value={formik.values.type} 
+          disabled={disabled} 
+          onChange={(e) => formik.setFieldValue("type", e.target.value) }
+          required
+        >
         <option value="" defaultValue="">Selecione</option>
         <option value="client">Cliente</option>
         <option value="seller">Vendedor</option>
-        <option value="admin">Administrador</option>
+        <option value="adm">Administrador</option>
       </SelectForm>
 
       { mode === 'insert' ? (
         <InputForm label="Senha" name="password"
           type="password"
           placeholder="Senha do usuário"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={formik.values.password}
+          onChange={formik.handleChange}
           required
         />
       ) : null }

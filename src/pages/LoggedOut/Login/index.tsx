@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FormEvent, useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useFormik } from "formik";
 
 import { useAuth } from "../../../contexts/AuthProvider/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -11,14 +12,30 @@ import { TitlePage } from "../../../components/TitlePage";
 import { useLoading } from "../../../contexts/LoadingProvider";
 import { Alert } from "../../../utils/alert";
 
+
 function Login(){
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  
   const auth = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const load = useLoading();
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: ""
+    },
+    onSubmit: ({ email, password }) => {
+      load.showLoading();
+
+      auth.authenticate(email, password).then(() => {
+        navigate("/home");
+      }).catch(err => {
+        Alert.showAxiosError(err);
+      }).finally(() => {
+        load.hideLoading();
+      });
+    }
+  })
 
   useEffect(() => {
     if (location.state?.passwordChanged === true) {
@@ -32,35 +49,21 @@ function Login(){
     }
   }, []);
 
-  async function handleSubmit(event: FormEvent) {
-    event.preventDefault();
-
-    load.showLoading();
-
-    auth.authenticate(email, password).then(() => {
-      navigate("/home");
-    }).catch(err => {
-      Alert.showAxiosError(err);
-    }).finally(() => {
-      load.hideLoading();
-    });
-  }
-
   return (
     <>
       <Container>
         <div>
           <TitlePage title="Portal de Atendimento" description="#acesseSuaConta" />
         
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={formik.handleSubmit}>
             <InputGroup 
               groupClass="mb-1" 
               name="email" 
               label="Usuário (E-mail)" 
               type="email" 
               placeholder="E-mail do usuário"
-              value={email} 
-              onChange={event => setEmail(event.target.value)} 
+              value={formik.values.email} 
+              onChange={formik.handleChange} 
             />
             
             <InputGroup
@@ -69,8 +72,8 @@ function Login(){
               label="Senha"
               type="password"
               placeholder="Senha do usuário"
-              value={password}
-              onChange={event => setPassword(event.target.value)}
+              value={formik.values.password}
+              onChange={formik.handleChange}
             />
 
             <Button type="submit" buttonClass="btn-primary" label="Entrar"></Button>

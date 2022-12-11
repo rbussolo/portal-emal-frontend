@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FormEvent, useEffect, useState } from "react"
-import { useLocation, useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { Button } from "../../../../components/Button"
 import { ButtonsFilter } from "../../../../components/Button/styles"
 import { InputForm } from "../../../../components/InputGroup"
@@ -15,22 +15,17 @@ import { EmptyUser, User, UserClient } from "../../../../services/users"
 import { Alert } from "../../../../utils/alert"
 import { maskCpfCnpj } from "../../../../utils/mask"
 
-interface UserClientCreateParams {
-  id: number;
-}
-
 const UserClientCreate = function () {
   const navigate = useNavigate();
-  const location = useLocation();
   const load = useLoading();
+  const { user_id } = useParams();
 
-  const { id } = location.state as UserClientCreateParams;
   const [user, setUser] = useState<User>({ ...EmptyUser });
   const [client, setClient] = useState<Cliente>({ ...EmptyCliente });
   const [userClients, setUserClients] = useState<UserClient[]>([]);
 
   function fetchUserClients(){
-    return api.get("/users/clients/" + id).then(response => {
+    return api.get(`/users/clients/${user_id}`).then(response => {
       setUserClients(response.data);
     }).catch(err => {
       Alert.showAxiosError(err);
@@ -41,7 +36,7 @@ const UserClientCreate = function () {
     load.showLoading();
 
     Promise.all([
-      api.get("/users/" + id).then(response => {
+      api.get(`/users/${user_id}`).then(response => {
         setUser(response.data);
       }).catch(err => {
         Alert.showAxiosError(err);
@@ -58,7 +53,7 @@ const UserClientCreate = function () {
     load.showLoading();
 
     api.post("/users/clients", { 
-      user_id: id, 
+      user_id, 
       client_id: client.CLICOD
     }).then(response => {
       setUserClients([ ...userClients, response.data ])
@@ -74,7 +69,7 @@ const UserClientCreate = function () {
 
     load.showLoading();
 
-    api.post("/users/clients/" + id).then(() => {
+    api.post(`/users/clients/${user_id}`).then(() => {
       navigate("/user/list");
     }).catch(err => {
       Alert.showAxiosError(err);
@@ -87,7 +82,7 @@ const UserClientCreate = function () {
     Alert.showConfirm("Realmente deseja remover este registro?", () => {
       load.showLoading();
 
-      api.delete("/users/clients/" + id).then(() => {
+      api.delete(`/users/clients/${id}`).then(() => {
         fetchUserClients();
 
         Alert.showSuccess("Registro removido com sucesso!");

@@ -7,6 +7,7 @@ interface InputGroupProps extends InputHTMLAttributes<HTMLInputElement> {
   divInputClass?: string;
   inputClass?: string;
   groupClass?: string;
+  messageError?: string;
 }
 
 interface SelectGroupProps extends SelectHTMLAttributes<HTMLSelectElement> {
@@ -14,6 +15,7 @@ interface SelectGroupProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label: string;
   groupClass?: string;
   inputClass?: string;
+  messageError?: string;
   children: JSX.Element | JSX.Element[];
 }
 
@@ -25,11 +27,14 @@ interface CheckBoxProps extends InputHTMLAttributes<HTMLInputElement> {
   groupClass?: string;
 }
 
-export function InputGroup({ name, label, inputClass, groupClass, ...rest }: InputGroupProps) {
+export function InputGroup({ name, label, inputClass, groupClass, messageError, ...rest }: InputGroupProps) {
   return (
-    <div className={groupClass ? groupClass : ''}>
+    <div className={(groupClass ? groupClass : '') + (messageError ? " has-validation" : "")}>
       <label htmlFor={name} className="form-label">{ label }:</label>
       <input id={name} name={name} className={`form-control ${inputClass ? inputClass : ''}`} {...rest} />
+      { messageError ? (
+        <div className="invalid-tooltip">{messageError}</div>
+      ) : null}
     </div>
   )
 }
@@ -90,25 +95,31 @@ export function SelectFilters({ name, label, groupClass, inputClass, children, .
   )
 }
 
-export function InputForm({ name, label, inputClass, groupClass, ...rest }: InputGroupProps) {
+export function InputForm({ name, label, inputClass, groupClass, messageError, ...rest }: InputGroupProps) {
   return (
     <div className={`mb-3 row ${groupClass ? groupClass : ''}`}>
       <label htmlFor={name} className="col-sm-3 col-form-label">{label}:</label>
       <div className="col-sm-9">
-        <input id={name} name={name} className={`form-control ${inputClass ? inputClass : ''}`} {...rest} />
+        <input id={name} name={name} className={`form-control ${inputClass ? inputClass : ''} ${messageError ? "is-invalid" : ""}`} {...rest} />
+        {messageError ? (
+          <div className="invalid-feedback">{messageError}</div>
+        ) : null}
       </div>
     </div>
   )
 }
 
-export function SelectForm({ name, label, groupClass, inputClass, children, ...rest }: SelectGroupProps) {
+export function SelectForm({ name, label, groupClass, inputClass, children, messageError, ...rest }: SelectGroupProps) {
   return (
     <div className={`mb-3 row ${groupClass ? groupClass : ''}`}>
       <label htmlFor={name} className="col-sm-3 col-form-label">{label}:</label>
       <div className="col-sm-9">
-        <select className={`form-select ${inputClass ? inputClass : ''}`} {...rest}>
+        <select className={`form-select ${inputClass ? inputClass : ''} ${messageError ? "is-invalid" : ""}`} {...rest}>
           {children}
         </select>
+        {messageError ? (
+          <div className="invalid-feedback">{messageError}</div>
+        ) : null}
       </div>
     </div>
   )
