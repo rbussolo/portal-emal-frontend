@@ -5,6 +5,10 @@ export interface Cliente {
   CLINOME?: string;
   CLICNPJCPF?: string;
   CLIEMAIL?: string;
+  CLIENDERECO?: string;
+  CLIENDERECONUM?: string;
+  CLICOBCEP?: string;
+  CLICOBCIDADE?: string;
 }
 
 export interface ListClientes {
