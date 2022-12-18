@@ -1,6 +1,6 @@
 import logo from './../../assets/images/logo.png';
 import { useAuth } from "../../contexts/AuthProvider/useAuth";
-import { Navbar, NavbarBrand, Container, Nav } from "react-bootstrap";
+import { Navbar, NavbarBrand, Nav } from "react-bootstrap";
 import { Logo, NavbarContainer, NavItemContainer } from './styles';
 import NavbarToggle from 'react-bootstrap/esm/NavbarToggle';
 import NavbarCollapse from 'react-bootstrap/esm/NavbarCollapse';
