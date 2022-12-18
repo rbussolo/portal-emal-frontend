@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FormEvent, useEffect, useState } from "react"
+import { useFormik } from "formik"
+import { FormEvent, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { Button } from "../../../../components/Button"
 import { ButtonsFilter } from "../../../../components/Button/styles"
@@ -10,23 +11,46 @@ import { TitlePage } from "../../../../components/TitlePage"
 import { useLoading } from "../../../../contexts/LoadingProvider"
 import { ContainerForm } from "../../../../global.styles"
 import { api } from "../../../../services/api"
-import { Cliente, EmptyCliente } from "../../../../services/cliente"
-import { EmptyUser, User, UserClient } from "../../../../services/users"
+import { EmptyCliente } from "../../../../services/cliente"
+import { EmptyUser, UserClient } from "../../../../services/users"
 import { Alert } from "../../../../utils/alert"
 import { maskCpfCnpj } from "../../../../utils/mask"
 
 const UserClientCreate = function () {
   const navigate = useNavigate();
-  const load = useLoading();
   const { user_id } = useParams();
+  const load = useLoading();
 
-  const [user, setUser] = useState<User>({ ...EmptyUser });
-  const [client, setClient] = useState<Cliente>({ ...EmptyCliente });
-  const [userClients, setUserClients] = useState<UserClient[]>([]);
+  const formik = useFormik({
+    initialValues: {
+      user: { ...EmptyUser },
+      client: { ...EmptyCliente },
+      userClients: [] as UserClient[]
+    },
+    onSubmit: () => {
+      load.showLoading();
+
+      api.post(`/users/clients/${user_id}`).then(() => {
+        navigate("/user/list");
+      }).catch(err => {
+        Alert.showAxiosError(err);
+      }).finally(() => {
+        load.hideLoading();
+      });
+    }
+  });
+
+  function fetchUser(){
+    api.get(`/users/${user_id}`).then(response => {
+      formik.setFieldValue("user", response.data);
+    }).catch(err => {
+      Alert.showAxiosError(err);
+    });
+  }
 
   function fetchUserClients(){
     return api.get(`/users/clients/${user_id}`).then(response => {
-      setUserClients(response.data);
+      formik.setFieldValue('userClients', response.data);
     }).catch(err => {
       Alert.showAxiosError(err);
     });
@@ -36,11 +60,7 @@ const UserClientCreate = function () {
     load.showLoading();
 
     Promise.all([
-      api.get(`/users/${user_id}`).then(response => {
-        setUser(response.data);
-      }).catch(err => {
-        Alert.showAxiosError(err);
-      }),
+      fetchUser(),
       fetchUserClients()
     ]).finally(() => {
       load.hideLoading();
@@ -48,29 +68,15 @@ const UserClientCreate = function () {
   }, []);
 
   function handleAdd(event: FormEvent) {
-    if (!client.CLICOD) return Alert.showError({ message: "É necessário informar o Cliente!" });
+    if (!formik.values.client.CLICOD) return Alert.showError({ message: "É necessário informar o Cliente!" });
     
     load.showLoading();
 
     api.post("/users/clients", { 
       user_id, 
-      client_id: client.CLICOD
+      client_id: formik.values.client.CLICOD
     }).then(response => {
-      setUserClients([ ...userClients, response.data ])
-    }).catch(err => {
-      Alert.showAxiosError(err);
-    }).finally(() => {
-      load.hideLoading();
-    });
-  }
-
-  function handleSubmit(event: FormEvent){
-    event.preventDefault();
-
-    load.showLoading();
-
-    api.post(`/users/clients/${user_id}`).then(() => {
-      navigate("/user/list");
+      formik.setFieldValue('userClients', [ ...formik.values.userClients, response.data ])
     }).catch(err => {
       Alert.showAxiosError(err);
     }).finally(() => {
@@ -101,7 +107,7 @@ const UserClientCreate = function () {
 
     api.put("/users/clients/" + userClient.id, { 
       state 
-    }).then(response => {
+    }).then(() => {
       fetchUserClients();
     }).catch(err => {
       Alert.showAxiosError(err);
@@ -111,24 +117,18 @@ const UserClientCreate = function () {
   }
 
   return (
-    <ContainerForm onSubmit={handleSubmit} className="container needs-validation" noValidate>
+    <ContainerForm onSubmit={formik.handleSubmit} className="container needs-validation" noValidate>
       <TitlePage title="Relação Usuário - Cliente" />
 
       <hr />
 
-      <InputForm label="Nome" name="name" type="text" disabled value={user?.name} />
-
-      <InputForm label="E-mail" name="email" type="text" disabled value={user?.email} />
-
-      <InputForm label="CPF/CNPJ" name="cpf_cnpj" type="text" disabled value={maskCpfCnpj(user?.cpf_cnpj)} />
+      <InputForm label="Nome" name="name" type="text" disabled value={formik.values.user?.name} />
+      <InputForm label="E-mail" name="email" type="text" disabled value={formik.values.user?.email} />
+      <InputForm label="CPF/CNPJ" name="cpf_cnpj" type="text" disabled value={maskCpfCnpj(formik.values.user?.cpf_cnpj)} />
 
       <hr />
 
-      <SearchClient
-        label="Cliente:"
-        client={client}
-        onClientChange={(client) => setClient(client)}
-      />
+      <SearchClient label="Cliente:" client={formik.values.client} onClientChange={(client) => formik.setFieldValue("client", client)} />
 
       <ButtonsFilter className="mb-3">
         <Button type="button" buttonClass="btn-success" label="Adicionar" onClick={handleAdd} />
@@ -149,7 +149,7 @@ const UserClientCreate = function () {
           </tr>
         </thead>
         <tbody>
-          {userClients.length > 0 ? userClients.map((userClient, index) => {
+          {formik.values.userClients.length > 0 ? formik.values.userClients.map((userClient, index) => {
             return (
               <tr key={userClient.id}>
                 <Td isIdentifier>{userClient.id}</Td>

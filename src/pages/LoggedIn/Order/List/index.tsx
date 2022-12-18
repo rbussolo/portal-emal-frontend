@@ -59,8 +59,6 @@ const OrderList = function () {
   useEffect(() => {
     const dataGroup = { ...EmptyPedidoGroup };
 
-    console.log(dataGroup);
-
     if (data.pedidos) {
       for (let i = 0; i < data.pedidos!.length; i++) {
         dataGroup.IPEDQUANT += data.pedidos[i].IPEDQUANT;
@@ -80,8 +78,6 @@ const OrderList = function () {
       setShowFooter(false);
     }
 
-    console.log(dataGroup);
-
     setDataGroup(dataGroup);
   }, [data]);
 
@@ -99,8 +95,6 @@ const OrderList = function () {
       pedItaipu: checkItaipu,
       pedCamil: checkCamil
     };
-
-    console.log(newFilters)
 
     setCurrentPage(1);
     setFilters(newFilters);

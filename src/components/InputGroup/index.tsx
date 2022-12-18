@@ -95,11 +95,11 @@ export function SelectFilters({ name, label, groupClass, inputClass, children, .
   )
 }
 
-export function InputForm({ name, label, inputClass, groupClass, messageError, ...rest }: InputGroupProps) {
+export function InputForm({ name, label, inputClass, groupClass, messageError, labelClass = "col-sm-3", divInputClass = "col-sm-9", ...rest }: InputGroupProps) {
   return (
     <div className={`mb-3 row ${groupClass ? groupClass : ''}`}>
-      <label htmlFor={name} className="col-sm-3 col-form-label">{label}:</label>
-      <div className="col-sm-9">
+      <label htmlFor={name} className={`${labelClass} col-form-label`}>{label}:</label>
+      <div className={divInputClass}>
         <input id={name} name={name} className={`form-control ${inputClass ? inputClass : ''} ${messageError ? "is-invalid" : ""}`} {...rest} />
         {messageError ? (
           <div className="invalid-feedback">{messageError}</div>

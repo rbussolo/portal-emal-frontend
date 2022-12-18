@@ -6,7 +6,7 @@ export const Container = styled.div`
 
   background-color: var(--background);
 
-  padding-bottom: 2rem;
+  /* padding-bottom: 2rem; */
 
   border-top: 1px solid var(--border-color);
 `
