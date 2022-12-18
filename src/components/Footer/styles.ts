@@ -21,7 +21,7 @@ export const Container = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    
+
     a {
       color: white;
       text-decoration: none;
@@ -38,6 +38,19 @@ export const Container = styled.div`
     > div {
       span + span {
         margin-left: 20px;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    > div {
+      div.left {
+        display: flex;
+        flex-direction: column;
+
+        span + span {
+          margin-left: 0px;
+        }
       }
     }
   }

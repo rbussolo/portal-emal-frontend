@@ -1,7 +1,7 @@
 import logo from './../../assets/images/logo.png';
 import { useAuth } from "../../contexts/AuthProvider/useAuth";
 import { Navbar, NavbarBrand, Container, Nav } from "react-bootstrap";
-import { Logo, NavItemContainer } from './styles';
+import { Logo, NavbarContainer, NavItemContainer } from './styles';
 import NavbarToggle from 'react-bootstrap/esm/NavbarToggle';
 import NavbarCollapse from 'react-bootstrap/esm/NavbarCollapse';
 
@@ -24,7 +24,7 @@ function Header() {
   
   return (
     <Navbar expand="lg">
-      <Container>
+      <NavbarContainer className="container">
         <NavbarBrand href="/">
           <Logo src={logo} alt="Logo" />
         </NavbarBrand>
@@ -58,7 +58,7 @@ function Header() {
             </NavbarCollapse>
           </>
         ) : null }
-      </Container>
+      </NavbarContainer>
     </Navbar>
   );
 }

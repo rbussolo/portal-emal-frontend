@@ -172,3 +172,24 @@ button.input-group-text:hover {
     margin-bottom: 0.25rem !important;
   }
 }
+
+@media (576px < width < 992px) {
+  .container {
+    max-width: calc(100% - 40px);
+  }
+}
+
+@media (width < 992px) {
+  .navbar-nav a.navbar-brand {
+    background-color: var(--background);
+    border: 1px solid var(--border-color);
+  }
+
+  .navbar-nav a.navbar-brand + a.navbar-brand {
+    margin-top: 1px;
+  }
+
+  .navbar-nav a.navbar-brand:last-child {
+    margin-bottom: 10px;
+  }
+}

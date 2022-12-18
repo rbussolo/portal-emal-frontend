@@ -6,21 +6,12 @@ const Logo = styled.img`
 
 const NavbarContainer = styled.div`
   display: flex;
-  justify-content: flex-end;
-  margin-left: auto;
+  flex-wrap: inherit;
+  align-items: center;
+  justify-content: space-between;
 
-  a {
-    color: #464f57;
-
-    &:focus {
-      color: #464f57;
-    }
-
-    &:hover, &:focus-visible {
-      background-color: #e4e4e4;
-      color: #005ca9;
-      outline: 1px solid;
-    }
+  @media (max-width: 992px) {
+    max-width: 100%;
   }
 `
 
