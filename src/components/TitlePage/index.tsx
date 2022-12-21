@@ -1,5 +1,5 @@
 import { Button } from "../Button";
-import { Container } from "./styles";
+import { Container, ContainerSubTitle } from "./styles";
 
 interface TitlePageProps {
   title: string;
@@ -23,5 +23,22 @@ export function TitlePage({ title, description, action }: TitlePageProps) {
         </div>
       ) : null }
     </Container>
+  )
+}
+
+interface SubTitleProps {
+  title: string;
+  preDivision?: boolean;
+}
+
+export function SubTitle({ title, preDivision = false }: SubTitleProps) {
+  return (
+    <ContainerSubTitle>
+      { preDivision ? (<hr />) : null}
+
+      <div>
+        <h3>{title}</h3>
+      </div>
+    </ContainerSubTitle>
   )
 }

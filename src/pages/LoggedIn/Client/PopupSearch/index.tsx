@@ -103,8 +103,8 @@ export function PopUpSearchClient({ isOpen, onSelected, onRequestClose }: PopUpS
           <Table>
             <thead>
               <tr>
-                <Td isIdentifier>Id</Td>
-                <Td>CPF/CNPJ</Td>
+                <Td extraClass='width-100' isIdentifier>Id</Td>
+                <Td extraClass='width-200'>CPF/CNPJ</Td>
                 <Td>Nome</Td>
               </tr>
             </thead>
@@ -112,8 +112,8 @@ export function PopUpSearchClient({ isOpen, onSelected, onRequestClose }: PopUpS
               {data.clients?.map((client, index) => {
                 return (
                   <Tr key={client.CLICOD} isSelectable={true} onClick={() => handleSelected(index)}>
-                    <Td isIdentifier>{client.CLICOD}</Td>
-                    <Td>{client.CLICNPJCPF}</Td>
+                    <Td extraClass='width-100' isIdentifier>{client.CLICOD}</Td>
+                    <Td extraClass='width-200'>{client.CLICNPJCPF}</Td>
                     <Td>{client.CLINOME}</Td>
                   </Tr>
                 )

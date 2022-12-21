@@ -6,9 +6,15 @@ export interface Cliente {
   CLICNPJCPF?: string;
   CLIEMAIL?: string;
   CLIENDERECO?: string;
-  CLIENDERECONUM?: string;
+  CLIENDERECONUM?: number;
   CLICOBCEP?: string;
-  CLICOBCIDADE?: string;
+  CLICOBCIDADE?: Number;
+  CLIENDERECOCOMP?: string;
+  CLIBAIRRO?: string;
+  CIDADE?: {
+    CIDCOD: number;
+    CIDNOME: string;
+  }
 }
 
 export interface ListClientes {
@@ -30,5 +36,15 @@ export const EmptyCliente: Cliente = {
   CLICOD: 0,
   CLINOME: "",
   CLICNPJCPF: "",
-  CLIEMAIL: ""
+  CLIEMAIL: "",
+  CLIENDERECO: "",
+  CLIENDERECONUM: 0,
+  CLICOBCEP: "",
+  CLICOBCIDADE: 0,
+  CLIENDERECOCOMP: "",
+  CLIBAIRRO: "",
+  CIDADE: {
+    CIDCOD: 0,
+    CIDNOME: ""
+  }
 }

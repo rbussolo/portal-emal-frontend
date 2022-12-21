@@ -161,6 +161,14 @@ button.input-group-text:hover {
   cursor: pointer;
 }
 
+.width-100 {
+  width: 100px;
+}
+
+.width-200 {
+  width: 200px;
+}
+
 @media (min-width: 576px) {
   .col-form-label {
     text-align: right;

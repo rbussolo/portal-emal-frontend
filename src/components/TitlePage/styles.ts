@@ -17,4 +17,9 @@ const Container = styled.div`
   }
 `;
 
-export { Container };
+const ContainerSubTitle = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export { Container, ContainerSubTitle };

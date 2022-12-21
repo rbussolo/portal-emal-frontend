@@ -69,4 +69,16 @@ export interface FiltersPedidos {
   pedCamil?: boolean;
 }
 
+export interface PedidoEstoque {
+  IPEDCOD?: number;
+  ESTQCOD: number;
+  ESTQNOMECOMP: string;
+  IPEDQUANT: number;
+  IPEDPESOTOT: number;
+  IPEDUNIT: number;
+  IPEDQUANTDESP: number;
+  IPEDQUANTCANC: number;
+  IPEDQUANTSALDO: number;
+}
+
 export const pedidoSituacaoEnum = ["Aprovado", "Cancelado", "Pendente", "Custo OK", "Reprovado"];

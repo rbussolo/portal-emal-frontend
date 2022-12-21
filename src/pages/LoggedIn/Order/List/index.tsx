@@ -88,7 +88,7 @@ const OrderList = function () {
       pedCli: client.CLICOD,
       pedDataInicial: initialDate,
       pedDataFinal: finalDate,
-      estqCod: estoque.ESTQCOD ? parseInt(estoque.ESTQCOD) : 0,
+      estqCod: estoque.ESTQCOD && estoque.ESTQCOD > 0 ? estoque.ESTQCOD : 0,
       pedNobres: checkNobres,
       pedCuiaba: checkCuiaba,
       pedAcucar: checkAcucar,

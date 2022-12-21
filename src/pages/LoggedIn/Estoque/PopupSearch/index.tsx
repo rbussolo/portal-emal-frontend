@@ -88,7 +88,7 @@ function PopUpSearchEstoque({ isOpen, onSelected, onRequestClose }: PopUpSearchE
           <Table>
             <thead>
               <tr>
-                <Td isIdentifier>Código</Td>
+                <Td extraClass="width-100" isIdentifier>Código</Td>
                 <Td>Nome</Td>
               </tr>
             </thead>
@@ -96,7 +96,7 @@ function PopUpSearchEstoque({ isOpen, onSelected, onRequestClose }: PopUpSearchE
               {data.estoques?.map((estoque, index) => {
                 return (
                   <Tr key={estoque.ESTQCOD} isSelectable={true} onClick={() => handleSelected(index)}>
-                    <Td isIdentifier>{estoque.ESTQCOD}</Td>
+                    <Td extraClass="width-100" isIdentifier>{estoque.ESTQCOD}</Td>
                     <Td>{estoque.ESTQNOMECOMP}</Td>
                   </Tr>
                 )

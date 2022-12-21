@@ -141,6 +141,10 @@ function IconUpdate({ to, state, title, onclick }: IconProps) {
     )
   }
 
+  if (onclick) {
+    return <i title={title} onClick={onclick} className="bi bi-pencil icon-update"></i>
+  }
+
   return null;
 }
 

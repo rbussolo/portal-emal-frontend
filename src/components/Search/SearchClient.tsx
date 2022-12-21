@@ -8,18 +8,20 @@ import { Alert } from "../../utils/alert";
 
 interface SearchClientProps {
   label?: string;
+  labelClass?: string;
+  divInputClass?: string;
   client: Cliente;
   onClientChange: (client: Cliente) => void;
 }
 
-const SearchClient = ({ label = "CPF/CNPJ:", client, onClientChange }: SearchClientProps) => {
+const SearchClient = ({ label = "CPF/CNPJ:", labelClass = "col-sm-3", divInputClass = "col-sm-9", client, onClientChange }: SearchClientProps) => {
   let lastClientCpfCnpj = "";
 
   const [isOpen, setOpen] = useState(false);
 
-  function onBlurClient() {
+  function onChangeClient(client: Cliente) {
     if (!client.CLICNPJCPF) {
-      onClientChange(EmptyCliente);
+      onClientChange({ ...EmptyCliente });
     } else if (client.CLICNPJCPF !== lastClientCpfCnpj) {
       api.get("/clients/byCpfCnpj/" + removeMask(client.CLICNPJCPF)).then(response => {
         onClientChange(response.data);
@@ -31,16 +33,20 @@ const SearchClient = ({ label = "CPF/CNPJ:", client, onClientChange }: SearchCli
     lastClientCpfCnpj = client.CLICNPJCPF || "";
   }
 
+  function onBlurClient() {
+    onChangeClient(client);
+  }
+
   function onSelectedClient(client: Cliente) {
-    onClientChange(client);
+    onChangeClient(client);
     setOpen(false);
   }
 
   return (
     <>
       <div className='mb-3 row'>
-        <label className="col-sm-3 col-form-label">{label}</label>
-        <div className="col-sm-9">
+        <label className={`${labelClass} col-form-label`}>{label}</label>
+        <div className={divInputClass}>
           <div className="input-group">
             <InputCpfCnpj
               type="text"
