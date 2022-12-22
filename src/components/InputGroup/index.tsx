@@ -13,10 +13,12 @@ interface InputGroupProps extends InputHTMLAttributes<HTMLInputElement> {
 interface SelectGroupProps extends SelectHTMLAttributes<HTMLSelectElement> {
   name: string;
   label: string;
+  labelClass?: string;
+  divInputClass?: string;
   groupClass?: string;
   inputClass?: string;
   messageError?: string;
-  children: JSX.Element | JSX.Element[];
+  children: React.ReactNode | JSX.Element | JSX.Element[];
 }
 
 interface CheckBoxProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -82,11 +84,11 @@ export function InputFiltersGroupDates({ initialDate, onInitialDateChange, final
   )
 }
 
-export function SelectFilters({ name, label, groupClass, inputClass, children, ...rest }: SelectGroupProps) {
+export function SelectFilters({ name, label, groupClass, inputClass, labelClass = "col-sm-3", divInputClass = "col-sm-9", children, ...rest }: SelectGroupProps) {
   return (
     <div className={`mb-3 row ${groupClass ? groupClass : ''}`}>
-      <label htmlFor={name} className="col-sm-3 col-form-label">{label}:</label>
-      <div className="col-sm-9">
+      <label htmlFor={name} className={`${labelClass} col-form-label`}>{label}:</label>
+      <div className={divInputClass}>
         <select className={`form-select ${inputClass ? inputClass : ''}`} {...rest}>
           { children }
         </select>

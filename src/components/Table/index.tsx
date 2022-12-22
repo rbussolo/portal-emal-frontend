@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, LinkProps } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ContainerNotFound, ContainerPagination, ContainerTable } from "./styles";
 
 interface ListProps {
@@ -46,7 +46,7 @@ function List({ count = 0, countPerPage = 50, currentPage = 1, showResults = tru
   }
 
   return (
-    <ContainerTable className={`${isPopup ? 'isPopup' : ''}`}>
+    <ContainerTable className={`${isPopup ? 'isPopup' : 'mb-5'}`}>
       <div>
         <ContainerPagination>
           <div>Total de registros: {count}</div>

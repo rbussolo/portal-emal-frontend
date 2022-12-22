@@ -4,6 +4,7 @@ import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import { Template } from '../components/Template';
 import { useAuth } from '../contexts/AuthProvider/useAuth';
 import { Home } from '../pages/LoggedIn/Home';
+import { MotoristaList } from '../pages/LoggedIn/Motorista/List';
 import { OrderCreate } from '../pages/LoggedIn/Order/Create';
 import { OrderList } from '../pages/LoggedIn/Order/List';
 import { UserClientCreate } from '../pages/LoggedIn/User/Client';
@@ -78,6 +79,8 @@ const RoutesApp = () => {
           <Route path="/user/list" element={<UserList />} />
           <Route path="/user/create/:mode/:user_id" element={<UserCreate />} />
           <Route path="/user/client/:user_id" element={<UserClientCreate />} />
+          <Route path="/driver/list" element={<MotoristaList />} />
+          <Route path="/driver/create/:mode/:user_id" element={<UserCreate />} />
         </Route>
 
         <Route element={<OpenRoute />}>
